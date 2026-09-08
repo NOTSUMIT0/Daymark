@@ -1,0 +1,18 @@
+[package]
+name = "daymark-desktop"
+version = "1.0.0"
+description = "Daymark Windows Desktop App"
+authors = ["Daymark Systems"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = [ "shell-open", "dialog-all", "notification-all", "fs-all" ] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
