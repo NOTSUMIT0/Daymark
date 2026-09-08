@@ -37,8 +37,10 @@ import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { CommandPaletteModal } from './components/CommandPaletteModal';
+import { SplashScreen } from './components/SplashScreen';
 
 function App() {
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [activePage, setActivePage] = useState<string>('Today');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [roadmaps, setRoadmaps] = useState<RoadmapMap[]>(getStoredRoadmaps);
@@ -692,6 +694,8 @@ function App() {
 
   return (
     <main className="app-shell">
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+
       <Sidebar
         activePage={activePage}
         onSelectPage={setActivePage}
