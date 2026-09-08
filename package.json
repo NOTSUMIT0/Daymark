@@ -12,6 +12,9 @@
     "cap:android": "npx cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
+    "@capacitor/local-notifications": "^8.3.1",
     "@vitejs/plugin-react": "latest",
     "jszip": "^3.10.1",
     "react": "latest",
@@ -21,6 +24,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.1",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
