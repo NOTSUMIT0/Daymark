@@ -57,12 +57,38 @@ function App() {
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
 
-  // Global Keyboard Shortcuts (Ctrl+K for search)
+  // Global Keyboard Shortcuts (Ctrl+K, Alt+N, Alt+T, Alt+R, Alt+S, Alt+Space)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Ctrl + K -> Toggle Command Palette Search
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
+      }
+      // Alt + N -> Jump to Notes
+      else if (e.altKey && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        setActivePage('Notes');
+      }
+      // Alt + T -> Jump to Tasks
+      else if (e.altKey && e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        setActivePage('Tasks');
+      }
+      // Alt + R -> Jump to Roadmaps
+      else if (e.altKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        setActivePage('Roadmaps');
+      }
+      // Alt + S -> Jump to Settings
+      else if (e.altKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        setActivePage('Settings');
+      }
+      // Alt + Space -> Start/Pause Focus Timer Sprint
+      else if (e.altKey && e.code === 'Space') {
+        e.preventDefault();
+        setIsTimerActive((prev) => !prev);
       }
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
