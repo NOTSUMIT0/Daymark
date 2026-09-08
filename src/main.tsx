@@ -36,9 +36,11 @@ import { FilesPage } from './pages/FilesPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { CommandPaletteModal } from './components/CommandPaletteModal';
 
 function App() {
   const [activePage, setActivePage] = useState<string>('Today');
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [roadmaps, setRoadmaps] = useState<RoadmapMap[]>(getStoredRoadmaps);
   const [activeMapId, setActiveMapId] = useState<string>(roadmaps[0]?.id || 'launch');
   const [tasks, setTasks] = useState<Task[]>(getStoredTasks);
@@ -54,6 +56,18 @@ function App() {
   });
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+
+  // Global Keyboard Shortcuts (Ctrl+K for search)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   // Sync state to local storage
   useEffect(() => {
@@ -664,9 +678,21 @@ function App() {
           page={activePage}
           actionLabel={headerAction?.label}
           onActionClick={headerAction?.onClick}
+          onOpenSearch={() => setIsSearchOpen(true)}
         />
         {renderPage()}
       </section>
+
+      {/* Global Quick Search & Command Palette Modal (Ctrl + K) */}
+      <CommandPaletteModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        tasks={tasks}
+        notes={notes}
+        roadmaps={roadmaps}
+        files={files}
+        onNavigate={setActivePage}
+      />
 
       {/* Floating Focus Mini-Player Widget (Global Across All Pages) */}
       {isMiniPlayerOpen && (
