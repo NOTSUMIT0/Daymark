@@ -77,6 +77,35 @@ button {
   z-index: 10;
 }
 
+.sidebar-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sidebar-settings-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-settings-icon-btn:hover,
+.sidebar-settings-icon-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
 .wordmark {
   border: 0;
   background: none;
@@ -4711,6 +4740,7 @@ h3 {
     height: auto !important;
   }
 
+  /* Header & Navigation */
   .sidebar {
     position: sticky !important;
     top: 0 !important;
@@ -4728,6 +4758,13 @@ h3 {
     background: var(--canvas) !important;
   }
 
+  .sidebar-header-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
   .sidebar .wordmark {
     font-size: 24px !important;
     padding: 0 !important;
@@ -4735,6 +4772,28 @@ h3 {
 
   .sidebar .wordmark span {
     font-size: 28px !important;
+  }
+
+  .sidebar-settings-icon-btn {
+    display: inline-flex !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--line) !important;
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sidebar-settings-icon-btn:hover,
+  .sidebar-settings-icon-btn.active {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+    border-color: var(--accent) !important;
   }
 
   .sidebar nav {
@@ -4797,7 +4856,7 @@ h3 {
   }
 
   .topbar h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
   }
 
   .date-hero {
@@ -4831,11 +4890,224 @@ h3 {
     left: 4% !important;
   }
 
-  .rich-editor-toolbar {
+  /* Notes Page Mobile Interface & Free Writing Space Fix */
+  .notes-page {
+    width: 100% !important;
+  }
+
+  .folder-nav-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .folder-pills {
     overflow-x: auto !important;
+    width: 100% !important;
+    padding-bottom: 4px !important;
+    scrollbar-width: none !important;
+  }
+
+  .folder-pills::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .notes-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: auto !important;
+    gap: 16px !important;
+  }
+
+  .note-list-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 240px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .note-items {
+    max-height: 160px !important;
+    overflow-y: auto !important;
+  }
+
+  .note-editor-panel {
+    width: 100% !important;
+    min-height: 480px !important;
+    height: auto !important;
+    padding: 16px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .editor-meta {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .rich-formatting-toolbar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    padding: 8px !important;
+  }
+
+  .picture-options-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .picture-tool-group {
+    flex-wrap: wrap !important;
+    border-right: none !important;
+  }
+
+  .note-body-wrapper {
+    min-height: 300px !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .rich-editor-content {
+    min-height: 300px !important;
+    flex: 1 !important;
+    font-size: 15px !important;
+    padding: 12px 8px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Reports Page Responsive Stacking & Sideways Scroll Fix */
+  .reports-page {
+    width: 100% !important;
+  }
+
+  .reports-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .horizon-tabs-group {
+    width: 100% !important;
+    overflow-x: auto !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .horizon-btn {
+    flex: 1 !important;
+    text-align: center !important;
     white-space: nowrap !important;
+    padding: 8px 6px !important;
+    font-size: 11.5px !important;
+  }
+
+  .reports-actions {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  .reports-actions button {
+    flex: 1 !important;
+    font-size: 12px !important;
+    padding: 8px 4px !important;
+  }
+
+  .period-scope-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 12px 14px !important;
+  }
+
+  .reports-top-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .productivity-score-card {
+    width: 100% !important;
+    padding: 20px 14px !important;
+  }
+
+  .kpi-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .kpi-card {
+    width: 100% !important;
+    padding: 18px 14px !important;
+  }
+
+  .charts-section-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .chart-panel {
+    padding: 18px 14px !important;
+  }
+
+  .donut-content-flex {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+
+  .donut-legend-list {
+    width: 100% !important;
+  }
+
+  .ai-intelligence-panel {
+    padding: 18px 14px !important;
+  }
+
+  .intelligence-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .recommendations-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .rec-card {
+    width: 100% !important;
+  }
+
+  .monthly-audit-panel {
+    padding: 18px 14px !important;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .audit-task-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .audit-task-meta {
+    flex-wrap: wrap !important;
+    width: 100% !important;
   }
 }
+
 
 
 

@@ -41,13 +41,43 @@ import { SplashScreen } from './components/SplashScreen';
 
 function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [activePage, setActivePage] = useState<string>('Today');
+  const [activePage, setActivePage] = useState<string>(() => {
+    const hash = window.location.hash.replace('#', '').trim();
+    const validPages = ['Today', 'Tasks', 'Roadmaps', 'Notes', 'Files', 'Reports', 'Settings'];
+    const matchedFromHash = validPages.find(p => p.toLowerCase() === hash.toLowerCase());
+    if (matchedFromHash) return matchedFromHash;
+
+    const stored = localStorage.getItem('daymark.activePage');
+    if (stored && validPages.includes(stored)) return stored;
+
+    return 'Today';
+  });
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [roadmaps, setRoadmaps] = useState<RoadmapMap[]>(getStoredRoadmaps);
   const [activeMapId, setActiveMapId] = useState<string>(roadmaps[0]?.id || 'launch');
   const [tasks, setTasks] = useState<Task[]>(getStoredTasks);
   const [notes, setNotes] = useState<Note[]>(getStoredNotes);
   const [files, setFiles] = useState<FileItem[]>(getStoredFiles);
+
+  useEffect(() => {
+    localStorage.setItem('daymark.activePage', activePage);
+    if (window.location.hash.replace('#', '').toLowerCase() !== activePage.toLowerCase()) {
+      window.location.hash = activePage.toLowerCase();
+    }
+  }, [activePage]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').trim();
+      const validPages = ['Today', 'Tasks', 'Roadmaps', 'Notes', 'Files', 'Reports', 'Settings'];
+      const matched = validPages.find(p => p.toLowerCase() === hash.toLowerCase());
+      if (matched) {
+        setActivePage(matched);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const [isDark, setIsDark] = useState<boolean>(() => {
     return localStorage.getItem('daymark.theme') === 'dark';
