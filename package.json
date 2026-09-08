@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "tauri:build": "tauri build",
+    "tauri:build": "npx -y @tauri-apps/cli build",
     "cap:sync": "npx cap sync",
     "cap:android": "npx cap open android"
   },

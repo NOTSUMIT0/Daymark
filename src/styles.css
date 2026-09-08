@@ -4704,90 +4704,136 @@ h3 {
 /* Android & Mobile Responsive Viewport System */
 @media (max-width: 768px) {
   .app-shell {
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    min-height: 100vh !important;
+    height: auto !important;
   }
 
   .sidebar {
-    width: 100%;
-    min-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-    padding: 12px 16px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    background: var(--canvas) !important;
+  }
+
+  .sidebar .wordmark {
+    font-size: 24px !important;
+    padding: 0 !important;
+  }
+
+  .sidebar .wordmark span {
+    font-size: 28px !important;
   }
 
   .sidebar nav {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 6px;
-    padding: 2px 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 4px 0 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   .sidebar nav::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
 
   .sidebar nav button {
-    padding: 6px 12px;
-    font-size: 12px;
-    white-space: nowrap;
-    border-radius: 20px;
+    padding: 6px 14px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--line) !important;
+    border-left: 1px solid var(--line) !important;
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sidebar nav button.active {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+    border-color: var(--accent) !important;
+  }
+
+  .sidebar nav button em {
+    margin-left: 6px !important;
   }
 
   .sidebar-foot,
   .workspace-name {
-    display: none;
+    display: none !important;
   }
 
   .workspace {
-    padding: 14px;
+    flex: 1 !important;
+    width: 100% !important;
+    padding: 14px 12px !important;
+    min-height: 0 !important;
+    overflow-y: visible !important;
   }
 
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .topbar h1 {
+    font-size: 1.5rem !important;
   }
 
   .date-hero {
-    padding: 16px;
+    padding: 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
   }
 
   .day-number {
-    font-size: 3rem;
+    font-size: 3rem !important;
   }
 
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   .focus-banner-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
   }
 
   .focus-timer-widget {
-    width: 100%;
-    align-items: flex-start;
+    width: 100% !important;
+    align-items: flex-start !important;
   }
 
   .focus-mini-player-widget {
-    width: 90% !important;
-    left: 5% !important;
+    width: 92% !important;
+    left: 4% !important;
   }
 
   .rich-editor-toolbar {
-    overflow-x: auto;
-    white-space: nowrap;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
   }
 }
 
