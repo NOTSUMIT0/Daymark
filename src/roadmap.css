@@ -1,0 +1,409 @@
+/* Roadmap Canvas Styles */
+.roadmap-container {
+  display: grid;
+  gap: 18px;
+}
+
+.roadmap-selector-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.selector-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.selector-group select {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  min-width: 220px;
+}
+
+.roadmap-title-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: 500 32px 'Georgia', serif;
+  padding: 0 0 10px;
+  outline: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.roadmap-desc-input {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  background: transparent;
+  color: var(--quiet);
+  font-size: 14px;
+  resize: vertical;
+  padding: 10px 0 0;
+  outline: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Canvas Host Shell */
+.graph-shell {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.canvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--canvas);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.canvas-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.connect-indicator {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.instruction-text {
+  font-size: 11px;
+  color: var(--quiet);
+}
+
+.action-pill {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.action-pill.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.danger-pill {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 11px;
+  color: var(--status-pending);
+  border-color: var(--status-pending);
+}
+
+.zoom-controls {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.zoom-controls button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.zoom-controls button:last-child {
+  border-right: 0;
+}
+
+/* Canvas Viewport */
+.canvas {
+  height: 680px;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  background-color: var(--canvas);
+  /* Blueprint Dot Grid */
+  background-image: radial-gradient(var(--line) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  user-select: none;
+}
+
+.canvas.panning,
+.canvas:active {
+  cursor: grabbing;
+}
+
+.canvas-background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4000px;
+  height: 3000px;
+}
+
+/* SVG Edges Layer */
+.edges-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.edge-click-target {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 16px;
+  cursor: pointer;
+  pointer-events: stroke;
+}
+
+.edge-path {
+  fill: none;
+  stroke: var(--quiet);
+  stroke-width: 2.2px;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease;
+  pointer-events: none;
+}
+
+.drag-edge-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5px;
+  stroke-dasharray: 6, 4;
+  animation: dash 1s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.edge-path.selected {
+  stroke: var(--accent);
+  stroke-width: 3.5px;
+}
+
+.arrow-head {
+  fill: var(--quiet);
+}
+
+.arrow-head-selected,
+.arrow-head-drag {
+  fill: var(--accent);
+}
+
+/* Node Cards & Dynamic Layout */
+.canvas-node {
+  position: absolute;
+  width: 240px;
+  min-height: 150px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: move;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  border-top-width: 4px;
+}
+
+.canvas-node:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+.canvas-node.pending {
+  border-top-color: var(--status-pending);
+}
+
+.canvas-node.progress {
+  border-top-color: var(--status-progress);
+}
+
+.canvas-node.complete {
+  border-top-color: var(--status-complete);
+}
+
+.canvas-node.connect-source {
+  outline: 2px dashed var(--accent);
+}
+
+/* Connection Handle Ports */
+.port {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--quiet);
+  cursor: crosshair;
+  pointer-events: auto;
+  z-index: 10;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.left-port {
+  left: -8px;
+}
+
+.right-port {
+  right: -8px;
+}
+
+.port:hover,
+.port.source-active {
+  transform: translateY(-50%) scale(1.35);
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(147, 62, 45, 0.25);
+}
+
+/* Node Card Content & Dynamic Text Wrapping */
+.node-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.node-index-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--quiet);
+  background: var(--canvas);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.node-status-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  padding: 0;
+  transition: transform 0.1s ease;
+}
+
+.dot-btn:hover {
+  transform: scale(1.2);
+}
+
+.dot-btn.pending {
+  background: var(--status-pending);
+  border-color: var(--status-pending);
+}
+
+.dot-btn.progress {
+  background: var(--status-progress);
+  border-color: var(--status-progress);
+}
+
+.dot-btn.complete {
+  background: var(--status-complete);
+  border-color: var(--status-complete);
+}
+
+.dot-btn.active {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink);
+}
+
+.node-body {
+  flex: 1;
+  overflow: hidden;
+  margin: 4px 0 8px;
+}
+
+.node-title {
+  font-size: 15px;
+  margin: 0 0 4px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.node-detail {
+  font-size: 12px;
+  color: var(--quiet);
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.node-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.status-pill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pill.pending {
+  color: var(--status-pending);
+}
+
+.status-pill.progress {
+  color: var(--status-progress);
+}
+
+.status-pill.complete {
+  color: var(--status-complete);
+}
+
+.edit-node-btn {
+  border: 0;
+  background: none;
+  font-size: 11px;
+  color: var(--quiet);
+  padding: 0;
+}
+
+.edit-node-btn:hover {
+  color: var(--accent);
+}
