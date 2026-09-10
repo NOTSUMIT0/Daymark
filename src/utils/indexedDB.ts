@@ -138,6 +138,29 @@ class DaymarkDB {
       await this.setAll('files', payload.files);
     }
   }
+
+  async checkStorageHealth(): Promise<{ isHealthy: boolean; recordCount: number; quotaMB?: number }> {
+    try {
+      const payload = await this.exportFullPayload();
+      const totalRecords =
+        (payload.roadmaps?.length || 0) +
+        (payload.tasks?.length || 0) +
+        (payload.notes?.length || 0) +
+        (payload.files?.length || 0);
+
+      let quotaMB: number | undefined;
+      if (navigator.storage && navigator.storage.estimate) {
+        const estimate = await navigator.storage.estimate();
+        if (estimate.usage) {
+          quotaMB = Math.round((estimate.usage / (1024 * 1024)) * 100) / 100;
+        }
+      }
+
+      return { isHealthy: true, recordCount: totalRecords, quotaMB };
+    } catch {
+      return { isHealthy: false, recordCount: 0 };
+    }
+  }
 }
 
 export const daymarkDB = new DaymarkDB();
