@@ -118,19 +118,31 @@ export function SettingsPage({
           <div className="storage-inventory-row">
             <div className="inventory-chip">
               <span className="chip-label">TASKS</span>
-              <strong className="chip-val">{tasksCount} Records</strong>
+              <div className="chip-val-group">
+                <span className="chip-count">{tasksCount}</span>
+                <span className="chip-type">Records</span>
+              </div>
             </div>
             <div className="inventory-chip">
               <span className="chip-label">ROADMAPS</span>
-              <strong className="chip-val">{roadmapsCount} Blueprints</strong>
+              <div className="chip-val-group">
+                <span className="chip-count">{roadmapsCount}</span>
+                <span className="chip-type">Blueprints</span>
+              </div>
             </div>
             <div className="inventory-chip">
               <span className="chip-label">NOTES</span>
-              <strong className="chip-val">{notesCount} Journals</strong>
+              <div className="chip-val-group">
+                <span className="chip-count">{notesCount}</span>
+                <span className="chip-type">Journals</span>
+              </div>
             </div>
             <div className="inventory-chip">
               <span className="chip-label">FILES</span>
-              <strong className="chip-val">{filesCount} Attachments</strong>
+              <div className="chip-val-group">
+                <span className="chip-count">{filesCount}</span>
+                <span className="chip-type">Attachments</span>
+              </div>
             </div>
           </div>
 
