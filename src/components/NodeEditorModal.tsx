@@ -32,9 +32,9 @@ export function NodeEditorModal({
       setLinks(links.filter((l) => getTargetId(l) !== targetId));
     } else {
       if (links.length >= 4) {
-        alert('Maximum of 4 outgoing links per node allowed.');
         return;
       }
+
       setLinks([...links, { targetId, sourceSide: 'right', targetSide: 'left' }]);
     }
   };

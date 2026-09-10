@@ -55,11 +55,12 @@ export function Sidebar({ activePage, onSelectPage, taskCount, workspaceName }: 
 
       <div className="sidebar-foot">
         <p>
-          <span className="sync-dot" title="Device Encrypted IndexedDB Storage Active" />
-          <span>IndexedDB Engine Active</span>
+          <span className="sync-dot" title="Device Encrypted Storage Active" />
+          <span>Daymark Desktop & Mobile</span>
         </p>
-        <small>Phase 1 & 2 Local-First Core</small>
+        <small>Local-First Private Workspace v1.0</small>
       </div>
     </aside>
   );
 }
+

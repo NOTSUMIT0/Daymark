@@ -146,9 +146,9 @@ export function RoadmapCanvas({
       }).length;
 
       if (sideLinksCount >= 2) {
-        alert(`This ${side} port already has 2 outgoing connections (maximum 2 allowed per port).`);
         return;
       }
+
 
       setConnectSource({ nodeId: node.id, side });
       const coords = getCanvasCoords(e.clientX, e.clientY);
@@ -227,9 +227,9 @@ export function RoadmapCanvas({
     ).length;
 
     if (incomingCount >= 2) {
-      alert(`Target node's ${targetSide} port already has 2 incoming connections (maximum 2 allowed).`);
       return;
     }
+
 
     const newLink: NodeLink = {
       targetId,

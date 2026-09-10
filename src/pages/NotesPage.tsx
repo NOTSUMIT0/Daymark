@@ -343,11 +343,10 @@ export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: Not
   };
 
   const handleDeleteFolder = (folderId: string) => {
-    if (confirm('Delete this folder? Notes inside will be moved to Unorganized.')) {
-      setFolders((prev) => prev.filter((f) => f.id !== folderId));
-      if (selectedFolderId === folderId) setSelectedFolderId('all');
-    }
+    setFolders((prev) => prev.filter((f) => f.id !== folderId));
+    if (selectedFolderId === folderId) setSelectedFolderId('all');
   };
+
 
   const saveCurrentContent = () => {
     if (!activeNote || !editorRef.current) return;

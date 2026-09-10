@@ -61,15 +61,11 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
   };
 
   const handleDeleteCategory = (catToDelete: string) => {
-    if (DEFAULT_CATEGORIES.includes(catToDelete)) {
-      alert('Default categories cannot be removed.');
-      return;
-    }
-    if (confirm(`Delete custom category "${catToDelete}"?`)) {
-      setCategories((prev) => prev.filter((c) => c !== catToDelete));
-      if (categoryFilter === catToDelete) setCategoryFilter('All');
-    }
+    if (DEFAULT_CATEGORIES.includes(catToDelete)) return;
+    setCategories((prev) => prev.filter((c) => c !== catToDelete));
+    if (categoryFilter === catToDelete) setCategoryFilter('All');
   };
+
 
   // Format File Size Helper
   const formatBytes = (bytes: number): string => {
@@ -141,11 +137,16 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
       const link = document.createElement('a');
       link.href = url;
       link.download = item.name;
+    } else if (item.textContent) {
+      const blob = new Blob([item.textContent], { type: 'text/plain;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${item.name}.txt`;
       link.click();
       URL.revokeObjectURL(url);
-    } else {
-      alert(`Preparing file download for ${item.name}`);
     }
+
   };
 
   // Update File Category
@@ -1062,13 +1063,16 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
                 <button
                   type="button"
                   className="quiet-button sm-btn"
-                  onClick={() => {
+                  onClick={(e) => {
                     navigator.clipboard.writeText(file.textContent || '');
-                    alert('Copied text content to clipboard!');
+                    const btn = e.currentTarget;
+                    btn.textContent = 'Copied ✓';
+                    setTimeout(() => { btn.textContent = 'Copy Text'; }, 2000);
                   }}
                 >
                   Copy Text
                 </button>
+
               </div>
               <pre className="code-text-display">
                 <code>{file.textContent || 'No text content available.'}</code>

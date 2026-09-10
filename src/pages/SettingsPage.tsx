@@ -3,6 +3,8 @@ import { getSecurityAuditLogs } from '../utils/security';
 import { requestNotificationPermission, sendNativeNotification } from '../utils/notificationService';
 
 
+import { DialogOptions } from '../components/AppDialogModal';
+
 interface SettingsPageProps {
   isDark: boolean;
   onToggleDark: () => void;
@@ -14,6 +16,7 @@ interface SettingsPageProps {
   onResetData: () => void;
   onExportCSV?: () => void;
   onExportText?: () => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
   tasksCount: number;
   roadmapsCount: number;
   notesCount: number;
@@ -31,11 +34,13 @@ export function SettingsPage({
   onResetData,
   onExportCSV,
   onExportText,
+  onShowDialog,
   tasksCount,
   roadmapsCount,
   notesCount,
   filesCount
 }: SettingsPageProps) {
+
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -189,8 +194,12 @@ export function SettingsPage({
                     'Daymark System Notification Test',
                     'Desktop and Mobile proactive notifications are active! You will be notified 1 day before tasks are due.'
                   );
-                } else {
-                  alert('Notification permission was denied. Please allow notifications in your browser/OS settings.');
+                } else if (onShowDialog) {
+                  onShowDialog({
+                    title: 'Notification Permission Required',
+                    message: 'Native OS notification permission was not granted. Please enable notifications in your OS/Device system settings.',
+                    type: 'danger'
+                  });
                 }
               }}
             >
@@ -235,13 +244,21 @@ export function SettingsPage({
               onClick={() => {
                 const logs = getSecurityAuditLogs();
                 const count = logs.length;
-                alert(`System Security Health: OPTIMAL\n\nRecorded Audit Events: ${count}\nData Encryption Engine: AES-GCM 256-bit Ready\nLocal Telemetry: DISABLED (100% Offline Private)`);
+                if (onShowDialog) {
+                  onShowDialog({
+                    title: 'Security & System Health Log',
+                    message: `System Security Status: OPTIMAL\n\n• Recorded Audit Events: ${count}\n• Data Encryption Engine: AES-GCM 256-bit Active\n• Telemetry: 100% Offline & Private`,
+                    type: 'info',
+                    confirmLabel: 'Close Log'
+                  });
+                }
               }}
             >
               Inspect Security Audit Log ({getSecurityAuditLogs().length} Events)
             </button>
           </div>
         </section>
+
 
         {/* Legal & Compliance Footer */}
         <section className="panel settings-panel legal-footer-panel">

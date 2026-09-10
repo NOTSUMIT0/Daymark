@@ -49,9 +49,20 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { CommandPaletteModal } from './components/CommandPaletteModal';
 import { SplashScreen } from './components/SplashScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { AppDialogModal, DialogOptions } from './components/AppDialogModal';
 
 function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [dialogState, setDialogState] = useState<DialogOptions>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
+
+  const showCustomDialog = (opts: Omit<DialogOptions, 'isOpen'>) => {
+    setDialogState({ ...opts, isOpen: true });
+  };
+
   const [activePage, setActivePage] = useState<string>(() => {
     const hash = window.location.hash.replace('#', '').trim();
     const validPages = ['Today', 'Tasks', 'Roadmaps', 'Notes', 'Files', 'Reports', 'Settings'];
@@ -189,7 +200,11 @@ function App() {
 
         const validation = validateBackupSchema(data);
         if (!validation.isValid) {
-          alert(`Backup validation failed: ${validation.error}`);
+          showCustomDialog({
+            title: 'Backup Validation Failed',
+            message: `The selected JSON backup file is invalid: ${validation.error}`,
+            type: 'danger'
+          });
           return;
         }
 
@@ -199,14 +214,23 @@ function App() {
         if (data.files && Array.isArray(data.files)) setFiles(data.files);
 
         await daymarkDB.importFullPayload(data);
-        alert('Backup data verified and imported into IndexedDB successfully!');
+        showCustomDialog({
+          title: 'Import Successful',
+          message: 'Backup data has been verified and restored into your local IndexedDB storage.',
+          type: 'success'
+        });
       } catch (err) {
         console.error('Import error:', err);
-        alert('Invalid or corrupted JSON backup file.');
+        showCustomDialog({
+          title: 'Corrupted Backup File',
+          message: 'The selected backup file is corrupted or not a valid JSON structure.',
+          type: 'danger'
+        });
       }
     };
     reader.readAsText(file);
   };
+
 
   // Roadmap actions
   const handleUpdateMap = (updatedFields: Partial<RoadmapMap>) => {
@@ -340,30 +364,45 @@ function App() {
   };
 
   const handleResetData = () => {
-    if (confirm('Are you sure you want to reset all local data? This action cannot be undone.')) {
-      localStorage.clear();
-      window.location.reload();
-    }
+    showCustomDialog({
+      title: 'Purge Local Storage',
+      message: 'Are you sure you want to reset all local workspace records? This action will permanently erase your offline tasks, notes, and roadmaps.',
+      type: 'danger',
+      confirmLabel: 'Purge Storage',
+      cancelLabel: 'Keep Data',
+      onConfirm: () => {
+        localStorage.clear();
+        window.location.reload();
+      }
+    });
   };
 
   const handleDeleteRoadmap = (mapId: string) => {
-    if (confirm('Are you sure you want to delete this roadmap blueprint?')) {
-      const remaining = roadmaps.filter((m) => m.id !== mapId);
-      if (remaining.length === 0) {
-        const fresh: RoadmapMap = {
-          id: crypto.randomUUID(),
-          title: 'Untitled Roadmap Blueprint',
-          description: 'Describe the main milestones and execution graph.',
-          nodes: []
-        };
-        setRoadmaps([fresh]);
-        setActiveMapId(fresh.id);
-      } else {
-        setRoadmaps(remaining);
-        setActiveMapId(remaining[0].id);
+    showCustomDialog({
+      title: 'Delete Roadmap Blueprint',
+      message: 'Are you sure you want to delete this roadmap milestone canvas? This action cannot be undone.',
+      type: 'danger',
+      confirmLabel: 'Delete Roadmap',
+      cancelLabel: 'Cancel',
+      onConfirm: () => {
+        const remaining = roadmaps.filter((m) => m.id !== mapId);
+        if (remaining.length === 0) {
+          const fresh: RoadmapMap = {
+            id: crypto.randomUUID(),
+            title: 'Untitled Roadmap Blueprint',
+            description: 'Describe the main milestones and execution graph.',
+            nodes: []
+          };
+          setRoadmaps([fresh]);
+          setActiveMapId(fresh.id);
+        } else {
+          setRoadmaps(remaining);
+          setActiveMapId(remaining[0].id);
+        }
       }
-    }
+    });
   };
+
 
   // Daily Main Focus & Global Timer State
   const [mainFocus, setMainFocus] = useState(() => {
@@ -742,6 +781,7 @@ function App() {
             onResetData={handleResetData}
             onExportCSV={() => exportTasksToCSV(tasks)}
             onExportText={() => exportNotesToText(notes)}
+            onShowDialog={showCustomDialog}
             tasksCount={tasks.length}
             roadmapsCount={roadmaps.length}
             notesCount={notes.length}
@@ -937,8 +977,15 @@ function App() {
         type={legalModal}
         onClose={() => setLegalModal(null)}
       />
+
+      {/* Global Application UI Custom Modal (Replaces Browser Dialogs) */}
+      <AppDialogModal
+        dialog={dialogState}
+        onClose={() => setDialogState((prev) => ({ ...prev, isOpen: false }))}
+      />
     </main>
   );
+
 
 }
 

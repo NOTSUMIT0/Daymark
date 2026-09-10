@@ -5206,11 +5206,183 @@ h3 {
   flex-wrap: wrap;
 }
 
+/* Custom Application UI Dialog Modal (Replaces Browser popups) */
+.app-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInOverlay 0.15s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.app-dialog-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 24px 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: slideUpCard 0.15s ease-out;
+}
+
+@keyframes slideUpCard {
+  from { transform: translateY(12px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.dialog-badge.info {
+  background: rgba(147, 62, 45, 0.12);
+  color: var(--accent);
+}
+
+.dialog-badge.danger {
+  background: rgba(217, 98, 87, 0.15);
+  color: var(--status-pending);
+}
+
+.dialog-badge.success {
+  background: rgba(99, 156, 115, 0.15);
+  color: var(--status-complete);
+}
+
+.dialog-close-btn {
+  background: transparent;
+  border: 0;
+  color: var(--quiet);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.dialog-close-btn:hover {
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.dialog-title {
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.dialog-message {
+  font-size: 13.5px;
+  color: var(--quiet);
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.danger-btn {
+  background: var(--status-pending) !important;
+  border-color: var(--status-pending) !important;
+  color: #ffffff !important;
+}
+
+.danger-btn:hover {
+  background: #bd483f !important;
+}
+
 /* Micro-animations & Focus Rings */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+
+/* Desktop Header Quick Search Trigger Styling */
+.header-search-trigger {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 8px 14px !important;
+  min-height: 38px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.header-search-trigger:hover {
+  background: var(--canvas) !important;
+  border-color: var(--accent) !important;
+}
+
+.header-search-trigger svg {
+  flex-shrink: 0 !important;
+  color: var(--quiet) !important;
+  transition: color 0.15s ease !important;
+}
+
+.header-search-trigger:hover svg {
+  color: var(--accent) !important;
+}
+
+.header-search-trigger .search-text-label {
+  color: var(--quiet) !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
+.header-search-trigger .esc-key-hint {
+  font-family: system-ui, -apple-system, sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  color: var(--quiet) !important;
+  background: var(--canvas) !important;
+  border: 1px solid var(--line) !important;
+  padding: 2px 7px !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.04em !important;
+  margin-left: 6px !important;
+  line-height: 1.2 !important;
+}
+
 
 /* Mobile Responsive Navigation Bar & Viewport Adjustments (< 768px) */
 .mobile-bottom-nav {
