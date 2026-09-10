@@ -5032,13 +5032,14 @@ h3 {
   .note-list-sidebar {
     width: 100% !important;
     height: auto !important;
-    max-height: 240px !important;
+    max-height: 380px !important;
     flex-shrink: 0 !important;
   }
 
   .note-items {
-    max-height: 160px !important;
+    max-height: 300px !important;
     overflow-y: auto !important;
+    padding-bottom: 8px !important;
   }
 
   .note-editor-panel {
@@ -5516,24 +5517,33 @@ h3 {
 }
 
 .export-modal-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  margin-top: 16px !important;
 }
 
 .export-modal-actions button,
 .export-modal-actions a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  padding: 0 16px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 6px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  height: 42px !important;
+  padding: 0 18px !important;
+  text-decoration: none !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.export-modal-actions button svg,
+.export-modal-actions a svg {
+  margin-right: 6px !important;
+  flex-shrink: 0 !important;
 }
 
 /* Custom Desktop-Style Roadmap Selector Dropdown */
@@ -6544,6 +6554,62 @@ h3 {
 
 .copy-export-btn.copied-success svg {
   stroke: #ffffff !important;
+}
+
+/* Premium Notes List Card & Formatting UI */
+.note-items {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 4px 4px 16px 4px !important;
+}
+
+.note-item-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  text-align: left !important;
+  padding: 14px 16px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
+  min-width: 0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  margin-bottom: 2px !important;
+  box-sizing: border-box !important;
+}
+
+.note-item-card.active {
+  border-color: var(--accent) !important;
+  background: var(--canvas) !important;
+  border-left: 4px solid var(--accent) !important;
+  box-shadow: 0 4px 14px rgba(147, 62, 45, 0.12) !important;
+}
+
+.note-item-card:hover:not(.active) {
+  border-color: var(--ink) !important;
+  background: var(--canvas) !important;
+}
+
+.note-item-card strong {
+  font-family: 'Georgia', serif !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: var(--ink) !important;
+}
+
+.note-card-excerpt {
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  color: var(--quiet) !important;
+  line-height: 1.45 !important;
 }
 
 

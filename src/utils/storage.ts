@@ -307,6 +307,48 @@ export function downloadFile(filename: string, content: string, mimeType: string
 }
 
 /**
+ * Advanced file download with Native File System Access Picker API (Save As location dialog)
+ * with robust fallback for all platforms.
+ */
+export async function downloadFileWithLocationPicker(
+  filename: string,
+  content: string,
+  mimeType: string
+): Promise<boolean> {
+  // Try Native File System Access API (showSaveFilePicker) if available
+  if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
+    try {
+      const ext = filename.includes('.') ? filename.split('.').pop() || 'txt' : 'txt';
+      const handle = await (window as any).showSaveFilePicker({
+        suggestedName: filename,
+        types: [
+          {
+            description: 'Save Data Export File',
+            accept: {
+              [mimeType || 'text/plain']: [`.${ext}`]
+            }
+          }
+        ]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return true;
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        // User cancelled the file picker dialog
+        return false;
+      }
+      console.warn('showSaveFilePicker failed or unsupported, executing Blob fallback:', err);
+    }
+  }
+
+  // Fallback: standard Blob download
+  downloadFile(filename, content, mimeType);
+  return true;
+}
+
+/**
  * Export tasks as a downloadable CSV spreadsheet
  */
 export function exportTasksToCSV(tasks: Task[]) {
