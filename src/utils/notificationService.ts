@@ -33,7 +33,15 @@ export function saveNotificationSettings(settings: NotificationSettings) {
  */
 export async function requestNotificationPermission(): Promise<boolean> {
   try {
-    // Web Notification Permission
+    // 1. Mobile Android (Capacitor) Native Permission
+    if (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform?.()) {
+      const { LocalNotifications } = await import('@capacitor/local-notifications');
+      const status = await LocalNotifications.requestPermissions();
+      logSecurityEvent('Capacitor Notification Permission', `Status: ${status.display}`, 'info');
+      return status.display === 'granted';
+    }
+
+    // 2. Web & Desktop Browser Permission
     if (typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'granted') return true;
       if (Notification.permission !== 'denied') {

@@ -5437,11 +5437,38 @@ h3 {
   border-color: var(--accent) !important;
 }
 
-/* Export Modal Styles */
+/* App Floating Modal Overlay (Fixed Centered Backdrop for Web & Mobile) */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  animation: fadeInOverlay 0.15s ease-out !important;
+  overflow-y: auto !important;
+}
+
 .export-modal-card {
-  max-width: 620px !important;
-  width: 92vw !important;
+  max-width: 580px !important;
+  width: 94vw !important;
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
   padding: 24px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35) !important;
+  animation: slideUpCard 0.2s ease-out !important;
+  margin: auto !important;
 }
 
 .export-filename-bar {
@@ -5449,10 +5476,10 @@ h3 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   background: var(--canvas);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
 }
 
@@ -5461,27 +5488,28 @@ h3 {
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 12px;
 }
 
 .export-modal-hint {
   font-size: 13px;
   color: var(--quiet);
-  margin-bottom: 12px;
-  line-height: 1.4;
+  margin-bottom: 14px;
+  line-height: 1.45;
 }
 
 .export-preview-textarea {
   width: 100%;
-  height: 180px;
+  height: 190px;
   font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 12px;
+  line-height: 1.5;
   padding: 12px;
   border: 1px solid var(--line);
   background: var(--canvas);
   color: var(--ink);
-  border-radius: 6px;
+  border-radius: 8px;
   resize: vertical;
   margin-bottom: 16px;
   box-sizing: border-box;
@@ -5500,14 +5528,139 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
+  height: 40px;
   padding: 0 16px;
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
+  border-radius: 6px;
 }
 
-/* Mobile Responsive Navigation Bar & Viewport Adjustments (< 768px) */
+/* Custom Desktop-Style Roadmap Selector Dropdown */
+.custom-roadmap-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.roadmap-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 220px;
+  justify-content: space-between;
+}
+
+.roadmap-dropdown-trigger:hover,
+.roadmap-dropdown-trigger.open {
+  background: var(--canvas);
+  border-color: var(--accent);
+}
+
+.roadmap-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  min-width: 260px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  padding: 6px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: slideUpCard 0.15s ease-out;
+}
+
+.roadmap-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  width: 100%;
+}
+
+.roadmap-dropdown-item:hover,
+.roadmap-dropdown-item.active {
+  background: var(--canvas);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.roadmap-dropdown-item .check-icon {
+  color: var(--status-complete);
+  font-weight: 800;
+}
+
+/* Tasks Toolbar & Filter Group Polish */
+.tasks-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--quiet);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.filter-btn.active {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(147, 62, 45, 0.25);
+}
+
+/* Mobile Responsive Adjustments (< 768px) */
 .mobile-bottom-nav {
   display: none;
 }
@@ -5794,6 +5947,7 @@ h3 {
   }
 
   /* Routine Item Actions Layout */
+  /* Routine Item Actions Layout */
   .routine-item {
     flex-wrap: wrap !important;
     padding: 12px !important;
@@ -5806,17 +5960,80 @@ h3 {
     gap: 6px !important;
   }
 
-  /* Task Rows & Cards Mobile Layout */
-  .task-row {
+  /* Tasks Toolbar & Filter Group Mobile Fix */
+  .tasks-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .filter-group {
+    width: 100% !important;
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    padding: 4px !important;
+    gap: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .filter-group::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .filter-btn {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    padding: 6px 12px !important;
+    font-size: 12.5px !important;
+    height: 34px !important;
+  }
+
+  .task-search,
+  .category-select-wrapper,
+  .tasks-toolbar button {
+    width: 100% !important;
+  }
+
+  /* Task Rows & Cards Mobile Card Spacing Fix */
+  .table-header {
+    display: none !important;
+  }
+
+  .table-row {
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
-    padding: 14px !important;
+    gap: 10px !important;
+    padding: 16px !important;
     background: var(--paper) !important;
     border: 1px solid var(--line) !important;
-    border-radius: 8px !important;
-    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  }
+
+  .status-col {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .title-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .actions-col {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+    border-top: 1px solid var(--line) !important;
+    padding-top: 10px !important;
   }
 
   .task-info {
@@ -5836,26 +6053,6 @@ h3 {
     color: var(--quiet) !important;
     margin-top: 4px !important;
     word-break: break-word !important;
-  }
-
-  .table-header {
-    display: none !important;
-  }
-
-  .table-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    padding: 14px !important;
-    background: var(--paper) !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 8px !important;
-    margin-bottom: 12px !important;
-  }
-
-  .status-col {
-    justify-content: flex-start !important;
-    align-items: flex-start !important;
   }
 
   /* Settings Control Rows Mobile Layout */

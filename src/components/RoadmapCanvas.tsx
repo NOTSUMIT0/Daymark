@@ -42,6 +42,18 @@ export function RoadmapCanvas({
   const [selectedEdge, setSelectedEdge] = useState<{ sourceId: string; targetId: string } | null>(null);
 
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Convert viewport client coordinates to canvas internal pixel coordinates
   const getCanvasCoords = (clientX: number, clientY: number) => {
@@ -406,18 +418,38 @@ export function RoadmapCanvas({
       {/* Selector & Roadmap Control Bar */}
       <div className="roadmap-selector-bar">
         <div className="selector-group">
-          <label htmlFor="roadmap-select">Select Roadmap:</label>
-          <select
-            id="roadmap-select"
-            value={map.id}
-            onChange={(e) => onSelectMap(e.target.value)}
-          >
-            {maps.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.title}
-              </option>
-            ))}
-          </select>
+          <label>Select Roadmap:</label>
+          <div className="custom-roadmap-dropdown" ref={dropdownRef}>
+            <button
+              type="button"
+              className={`roadmap-dropdown-trigger ${isDropdownOpen ? 'open' : ''}`}
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+            >
+              <span>{map.title}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            {isDropdownOpen && (
+              <div className="roadmap-dropdown-menu">
+                {maps.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    className={`roadmap-dropdown-item ${m.id === map.id ? 'active' : ''}`}
+                    onClick={() => {
+                      onSelectMap(m.id);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    <span>{m.title}</span>
+                    {m.id === map.id && <span className="check-icon">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button type="button" className="quiet-button" onClick={onCreateMap}>
             + New Roadmap
