@@ -817,6 +817,7 @@ function App() {
           actionLabel={headerAction?.label}
           onActionClick={headerAction?.onClick}
           onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenSettings={() => setActivePage('Settings')}
         />
         {renderPage()}
       </section>
