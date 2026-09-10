@@ -3,9 +3,18 @@ interface HeaderProps {
   onActionClick?: () => void;
   actionLabel?: string;
   onOpenSearch?: () => void;
+  onBack?: () => void;
 }
 
-export function Header({ page, onActionClick, actionLabel, onOpenSearch }: HeaderProps) {
+export function Header({ page, onActionClick, actionLabel, onOpenSearch, onBack }: HeaderProps) {
+  const handleBackNavigation = () => {
+    if (onBack) {
+      onBack();
+    } else if (window.history.length > 1) {
+      window.history.back();
+    }
+  };
+
   const getSubheading = () => {
     switch (page) {
       case 'Today':
@@ -29,9 +38,22 @@ export function Header({ page, onActionClick, actionLabel, onOpenSearch }: Heade
 
   return (
     <header className="topbar">
-      <div>
-        <p className="eyebrow">DAYMARK ECOSYSTEM</p>
-        <h1>{getSubheading()}</h1>
+      <div className="header-title-container" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button
+          type="button"
+          className="header-mobile-back-btn"
+          onClick={handleBackNavigation}
+          title="Go back to previous page"
+          aria-label="Back"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div>
+          <p className="eyebrow">DAYMARK — {page.toUpperCase()}</p>
+          <h1>{getSubheading()}</h1>
+        </div>
       </div>
 
       <div className="header-actions-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -41,19 +63,12 @@ export function Header({ page, onActionClick, actionLabel, onOpenSearch }: Heade
             className="quiet-button header-search-trigger"
             onClick={onOpenSearch}
             title="Search all tasks, notes, roadmaps & files (Ctrl + K)"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '7px 12px',
-              fontSize: '13px'
-            }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <span>Search...</span>
+            <span className="search-text-label">Search...</span>
             <kbd className="esc-key-hint" style={{ fontSize: '9px', padding: '1px 5px' }}>Ctrl K</kbd>
           </button>
         )}
@@ -67,3 +82,4 @@ export function Header({ page, onActionClick, actionLabel, onOpenSearch }: Heade
     </header>
   );
 }
+

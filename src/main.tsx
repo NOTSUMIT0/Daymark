@@ -26,6 +26,7 @@ import { computePayloadChecksum, validateBackupSchema } from './utils/security';
 
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { MobileNav } from './components/MobileNav';
 import { PrivacyTermsModal } from './components/PrivacyTermsModal';
 
 import { TodayPage } from './pages/TodayPage';
@@ -733,6 +734,13 @@ function App() {
         taskCount={tasks.filter((t) => t.status !== 'complete').length}
         workspaceName={workspaceName}
       />
+
+      <MobileNav
+        activePage={activePage}
+        onSelectPage={setActivePage}
+        taskCount={tasks.filter((t) => t.status !== 'complete').length}
+      />
+
 
       <section className="workspace">
         <Header
