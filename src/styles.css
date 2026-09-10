@@ -5568,7 +5568,147 @@ h3 {
     font-weight: 600;
     letter-spacing: 0.02em;
   }
+
+  /* Focus Timer Mobile Controls Layout (Screenshot 1) */
+  .focus-timer-widget {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .timer-display {
+    text-align: center !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .timer-controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .timer-controls button {
+    flex: 1 1 calc(50% - 6px) !important;
+    min-width: 110px !important;
+    height: 38px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    padding: 0 8px !important;
+  }
+
+  .popout-trigger-btn span {
+    white-space: nowrap !important;
+  }
+
+  /* Panel Headers & Badges Layout (Screenshots 2 & 4) */
+  .panel-head,
+  .panel-header,
+  .insight-card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .panel-head h2,
+  .panel-head h3,
+  .insight-card-header h3 {
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
+  }
+
+  .routine-head-actions,
+  .panel-head-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .count-tag {
+    white-space: nowrap !important;
+  }
+
+  /* Task Rows & Cards Mobile Layout (Screenshot 3) */
+  .task-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 14px !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .task-info {
+    width: 100% !important;
+  }
+
+  .task-info strong {
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  .task-info p {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--quiet) !important;
+    margin-top: 4px !important;
+    word-break: break-word !important;
+  }
+
+  .table-header {
+    display: none !important;
+  }
+
+  .table-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 14px !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Settings Control Rows Mobile Layout (Screenshot 5) */
+  .setting-control-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .setting-info-text {
+    width: 100% !important;
+  }
+
+  .setting-control-row button,
+  .setting-control-row .theme-switch-pill {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    height: 40px !important;
+  }
+
+  .actions-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .actions-row button {
+    width: 100% !important;
+  }
 }
+
 
 
 
