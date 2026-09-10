@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Task, TaskPriority, NodeStatus } from '../types';
 
 interface TasksPageProps {
@@ -25,9 +25,23 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
   const [resourceLabel, setResourceLabel] = useState('');
   const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
 
+  // Custom Dropdown State
+  const [isCatDropdownOpen, setIsCatDropdownOpen] = useState(false);
+  const catDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: globalThis.MouseEvent) => {
+      if (catDropdownRef.current && !catDropdownRef.current.contains(e.target as Node)) {
+        setIsCatDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const categories = ['all', 'Development', 'Design', 'Architecture', 'Security', 'Planning', 'General'];
 
-  // Status Normalizer (Handles legacy strings like 'completed', 'in-progress', 'done')
+  // Status Normalizer
   const normalizeStatus = (s: string): NodeStatus => {
     const lower = (s || '').toLowerCase().trim();
     if (lower === 'complete' || lower === 'completed' || lower === 'done') return 'complete';
@@ -162,28 +176,33 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
         </div>
       </div>
 
-      {/* Main Single-Line Clean Toolbar */}
+      {/* Main Responsive Toolbar */}
       <div className="tasks-toolbar">
+        {/* All 4 Status Filters visible side by side / grid */}
         <div className="filter-group">
           <button
+            type="button"
             className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
             onClick={() => setStatusFilter('all')}
           >
             All ({tasks.length})
           </button>
           <button
+            type="button"
             className={`filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
             onClick={() => setStatusFilter('pending')}
           >
             Pending ({pendingCount})
           </button>
           <button
+            type="button"
             className={`filter-btn ${statusFilter === 'progress' ? 'active' : ''}`}
             onClick={() => setStatusFilter('progress')}
           >
             In Progress ({progressCount})
           </button>
           <button
+            type="button"
             className={`filter-btn ${statusFilter === 'complete' ? 'active' : ''}`}
             onClick={() => setStatusFilter('complete')}
           >
@@ -191,19 +210,39 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
           </button>
         </div>
 
-        <div className="category-select-wrapper">
-          <label htmlFor="cat-filter">Category:</label>
-          <select
-            id="cat-filter"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
+        {/* Custom Category Dropdown (Desktop & Mobile Unified) */}
+        <div className="custom-roadmap-dropdown category-dropdown-wrapper" ref={catDropdownRef}>
+          <button
+            type="button"
+            className={`roadmap-dropdown-trigger ${isCatDropdownOpen ? 'open' : ''}`}
+            onClick={() => setIsCatDropdownOpen((prev) => !prev)}
           >
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c === 'all' ? 'All Categories' : c}
-              </option>
-            ))}
-          </select>
+            <span>
+              {categoryFilter === 'all' ? 'All Categories' : `Category: ${categoryFilter}`}
+            </span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          {isCatDropdownOpen && (
+            <div className="roadmap-dropdown-menu">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`roadmap-dropdown-item ${categoryFilter === c ? 'active' : ''}`}
+                  onClick={() => {
+                    setCategoryFilter(c);
+                    setIsCatDropdownOpen(false);
+                  }}
+                >
+                  <span>{c === 'all' ? 'All Categories' : c}</span>
+                  {categoryFilter === c && <span className="check-icon">✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <input
@@ -219,232 +258,242 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
         </button>
       </div>
 
-      {/* Tasks Table */}
+      {/* Tasks Grid List */}
       <section className="panel tasks-panel">
-        <div className="tasks-table">
-          <div className="table-header">
-            <span>Status</span>
-            <span>Task Title, Category &amp; Resources</span>
-            <span>Priority</span>
-            <span>Due Date</span>
-            <span>Actions</span>
-          </div>
-
-          {filteredTasks.length === 0 ? (
-            <div className="empty-tasks-container">
-              <div className="empty-icon">📋</div>
-              <h3>No Tasks Found</h3>
-              <p>
-                No tasks match the current status filter ({statusFilter.toUpperCase()}) or category search.
-              </p>
-              <div className="empty-actions">
-                <button
-                  type="button"
-                  className="quiet-button"
-                  onClick={() => {
-                    setStatusFilter('all');
-                    setCategoryFilter('all');
-                    setSearchTerm('');
-                  }}
-                >
-                  Reset Filters
-                </button>
-                <button type="button" className="primary-button" onClick={openCreateModal}>
-                  + Create Task
-                </button>
-              </div>
+        {filteredTasks.length === 0 ? (
+          <div className="empty-tasks-container">
+            <div className="empty-icon">📋</div>
+            <h3>No Tasks Found</h3>
+            <p>
+              No tasks match the current status filter ({statusFilter.toUpperCase()}) or category search.
+            </p>
+            <div className="empty-actions">
+              <button
+                type="button"
+                className="quiet-button"
+                onClick={() => {
+                  setStatusFilter('all');
+                  setCategoryFilter('all');
+                  setSearchTerm('');
+                }}
+              >
+                Reset Filters
+              </button>
+              <button type="button" className="primary-button" onClick={openCreateModal}>
+                + Create Task
+              </button>
             </div>
-          ) : (
-            filteredTasks.map((t) => {
+          </div>
+        ) : (
+          <div className="task-cards-grid">
+            {filteredTasks.map((t) => {
               const currentNormStatus = normalizeStatus(t.status);
+              const normPriority = getPriorityClass(t.priority);
               return (
-                <div key={t.id} className="table-row">
-                  <div className="status-col">
-                    <button
-                      type="button"
-                      className={`status-dot ${currentNormStatus}`}
-                      title="Click to advance status"
-                      onClick={() => {
-                        const nextStatus: NodeStatus =
-                          currentNormStatus === 'pending'
-                            ? 'progress'
-                            : currentNormStatus === 'progress'
-                            ? 'complete'
-                            : 'pending';
-                        onUpdateTask({ ...t, status: nextStatus });
-                      }}
-                    />
-                  </div>
-
-                  <div className="title-col">
-                    <div className="title-header-row">
-                      <strong className={`task-title-text ${currentNormStatus === 'complete' ? 'completed-text' : ''}`}>
-                        {t.title}
-                      </strong>
-                      {t.category && <span className="category-tag">{t.category}</span>}
+                <div
+                  key={t.id}
+                  className={`task-card-item status-${currentNormStatus} priority-${normPriority}`}
+                >
+                  <div className="task-card-top">
+                    <div className="status-badge-group">
+                      <button
+                        type="button"
+                        className={`status-toggle-btn ${currentNormStatus}`}
+                        title="Click to advance status"
+                        onClick={() => {
+                          const nextStatus: NodeStatus =
+                            currentNormStatus === 'pending'
+                              ? 'progress'
+                              : currentNormStatus === 'progress'
+                              ? 'complete'
+                              : 'pending';
+                          onUpdateTask({ ...t, status: nextStatus });
+                        }}
+                      >
+                        <span className="dot" />
+                        <span>{currentNormStatus.toUpperCase()}</span>
+                      </button>
+                      {t.category && <span className="category-chip">{t.category}</span>}
                     </div>
-
-                    {t.detail && <p className="task-detail-text">{t.detail}</p>}
-
-                    {/* Resource Attachment Links */}
-                    {t.resourceUrl && (
-                      <div className="resource-link-box">
-                        <a
-                          href={t.resourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="resource-anchor"
-                        >
-                          🔗 {t.resourceLabel || t.resourceUrl}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="priority-col">
-                    <span className={`priority-badge ${getPriorityClass(t.priority)}`}>
+                    <span className={`priority-tag ${normPriority}`}>
                       {formatPriorityText(t.priority)}
                     </span>
                   </div>
 
-                  <div className="due-col">
-                    {formatDueDateDisplay(t.dueDate)}
-                  </div>
+                  <h3 className={`task-card-title ${currentNormStatus === 'complete' ? 'completed-text' : ''}`}>
+                    {t.title}
+                  </h3>
 
-                  <div className="actions-col">
-                    <button
-                      type="button"
-                      className="quiet-button sm-btn"
-                      onClick={() => openEditModal(t)}
-                    >
-                      Edit ✎
-                    </button>
-                    <button
-                      type="button"
-                      className="quiet-button danger-sm"
-                      onClick={() => onDeleteTask(t.id)}
-                    >
-                      Delete
-                    </button>
+                  {t.detail && <p className="task-card-detail">{t.detail}</p>}
+
+                  <div className="task-card-bottom">
+                    <div className="meta-tags-row">
+                      {t.dueDate && (
+                        <span className="due-date-chip">
+                          📅 {formatDueDateDisplay(t.dueDate)}
+                        </span>
+                      )}
+                      {t.resourceUrl && (
+                        <a
+                          href={t.resourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="resource-chip"
+                        >
+                          🔗 {t.resourceLabel || 'Resource Link'}
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="task-actions-row">
+                      <button
+                        type="button"
+                        className="quiet-button sm-btn"
+                        onClick={() => openEditModal(t)}
+                      >
+                        Edit ✎
+                      </button>
+                      <button
+                        type="button"
+                        className="quiet-button danger-sm"
+                        onClick={() => onDeleteTask(t.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
       </section>
 
       {/* Task Creation & Editing Modal */}
       {showModal && (
-        <div className="modal-backdrop" onMouseDown={() => setShowModal(false)}>
-          <section className="composer" onMouseDown={(e) => e.stopPropagation()}>
-            <button className="close" onClick={() => setShowModal(false)} aria-label="Close modal">
-              ×
-            </button>
-            <p className="eyebrow">{editingTask ? 'EDIT TASK ENTRY' : 'NEW TASK ENTRY'}</p>
-
-            <label>
-              Task Title
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Audit database query execution plan"
-                autoFocus
-              />
-            </label>
-
-            <label>
-              Description &amp; Action Steps
-              <textarea
-                value={detail}
-                onChange={(e) => setDetail(e.target.value)}
-                placeholder="Describe next concrete actions, requirements, and deliverables..."
-              />
-            </label>
-
-            <div className="composer-row">
-              <label>
-                Category
-                <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  <option value="Development">Development</option>
-                  <option value="Design">Design</option>
-                  <option value="Architecture">Architecture</option>
-                  <option value="Security">Security</option>
-                  <option value="Planning">Planning</option>
-                  <option value="General">General</option>
-                </select>
-              </label>
-
-              <label>
-                Priority Level
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                >
-                  <option value="high">High Priority</option>
-                  <option value="med">Medium Priority</option>
-                  <option value="low">Low Priority</option>
-                </select>
-              </label>
-
-              <label>
-                Status
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as NodeStatus)}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="progress">In Progress</option>
-                  <option value="complete">Completed</option>
-                </select>
-              </label>
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-card task-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">{editingTask ? 'EDIT TASK ENTRY' : 'NEW TASK ENTRY'}</p>
+                <h3>{editingTask ? 'Update Task Details' : 'Create New Task'}</h3>
+              </div>
+              <button type="button" className="close-btn" onClick={() => setShowModal(false)} aria-label="Close">
+                ✕
+              </button>
             </div>
 
-            <div className="composer-row">
-              <label className="flex-2">
-                Resource Link URL (Docs, Figma, PR)
-                <input
-                  type="url"
-                  value={resourceUrl}
-                  onChange={(e) => setResourceUrl(e.target.value)}
-                  placeholder="https://github.com/... or https://figma.com/..."
-                />
-              </label>
-
-              <label className="flex-1">
-                Link Title / Label
+            <div className="task-form-body">
+              <label className="form-label">
+                Task Title
                 <input
                   type="text"
-                  value={resourceLabel}
-                  onChange={(e) => setResourceLabel(e.target.value)}
-                  placeholder="e.g. Figma Spec"
+                  className="form-input"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Audit database query execution plan"
+                  autoFocus
                 />
               </label>
-            </div>
 
-            <label>
-              Due Date
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </label>
+              <label className="form-label">
+                Description &amp; Action Steps
+                <textarea
+                  className="form-textarea"
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  placeholder="Describe next concrete actions, requirements, and deliverables..."
+                />
+              </label>
 
-            <div className="modal-actions">
-              <button
-                type="button"
-                className="quiet-button"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-              <button type="button" className="primary-button" onClick={handleSave}>
-                {editingTask ? 'Save Task Changes' : 'Add Task to List'}
-              </button>
+              <div className="form-row-3col">
+                <label className="form-label">
+                  Category
+                  <select className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
+                    <option value="Development">Development</option>
+                    <option value="Design">Design</option>
+                    <option value="Architecture">Architecture</option>
+                    <option value="Security">Security</option>
+                    <option value="Planning">Planning</option>
+                    <option value="General">General</option>
+                  </select>
+                </label>
+
+                <label className="form-label">
+                  Priority Level
+                  <select
+                    className="form-select"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                  >
+                    <option value="high">High Priority</option>
+                    <option value="med">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                  </select>
+                </label>
+
+                <label className="form-label">
+                  Status
+                  <select
+                    className="form-select"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as NodeStatus)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="progress">In Progress</option>
+                    <option value="complete">Completed</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="form-row-2col">
+                <label className="form-label">
+                  Resource Link URL (Docs, Figma, PR)
+                  <input
+                    type="url"
+                    className="form-input"
+                    value={resourceUrl}
+                    onChange={(e) => setResourceUrl(e.target.value)}
+                    placeholder="https://github.com/... or https://figma.com/..."
+                  />
+                </label>
+
+                <label className="form-label">
+                  Link Title / Label
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={resourceLabel}
+                    onChange={(e) => setResourceLabel(e.target.value)}
+                    placeholder="e.g. Figma Spec"
+                  />
+                </label>
+              </div>
+
+              <label className="form-label">
+                Due Date
+                <input
+                  type="date"
+                  className="form-input"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                />
+              </label>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="quiet-button"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button type="button" className="primary-button" onClick={handleSave}>
+                  {editingTask ? 'Save Task Changes' : 'Add Task to List'}
+                </button>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       )}
     </section>

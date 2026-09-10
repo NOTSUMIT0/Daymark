@@ -140,23 +140,33 @@ export function checkAndNotifyDueTasks(tasks: Task[]) {
     const todayStr = today.toISOString().split('T')[0];
 
     tasks.forEach((task) => {
-      if (task.status === 'complete' || !task.dueDate) return;
+      if (task.status === 'complete') return;
 
       const isDueTomorrow = task.dueDate === targetDateStr;
       const isDueToday = task.dueDate === todayStr;
+      const isHighPri = (task.priority || '').toLowerCase() === 'high';
 
-      const key = `${task.id}_${task.dueDate}`;
-      const lastNotified = notifiedMap[key];
+      const dueKey = `due_${task.id}_${task.dueDate}`;
+      const highPriKey = `highpri_${task.id}_${todayStr}`;
 
-      if ((isDueTomorrow || isDueToday) && !lastNotified) {
+      if ((isDueTomorrow || isDueToday) && !notifiedMap[dueKey]) {
         const title = isDueTomorrow
           ? `Task Due Tomorrow — Daymark`
           : `Task Due Today — Daymark`;
         const body = `"${task.title}" is scheduled for ${task.dueDate}. Priority: ${task.priority.toUpperCase()}`;
 
         sendNativeNotification(title, body, `task_${task.id}`);
-        notifiedMap[key] = new Date().toISOString();
+        notifiedMap[dueKey] = new Date().toISOString();
         logSecurityEvent('Due Date Notification Fired', `Task: ${task.title} (Due: ${task.dueDate})`, 'info');
+      }
+
+      if (isHighPri && !notifiedMap[highPriKey]) {
+        const title = `High Priority Task Pending — Daymark`;
+        const body = `"${task.title}" is flagged HIGH priority and pending execution.`;
+
+        sendNativeNotification(title, body, `highpri_${task.id}`);
+        notifiedMap[highPriKey] = new Date().toISOString();
+        logSecurityEvent('High Priority Notification Fired', `Task: ${task.title}`, 'info');
       }
     });
 

@@ -5613,6 +5613,262 @@ h3 {
   font-weight: 800;
 }
 
+/* Task Modal Form & Grid Styling */
+.task-modal-card {
+  max-width: 640px !important;
+  width: 94vw !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35) !important;
+  margin: auto !important;
+}
+
+.task-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  color: var(--ink);
+  border-radius: 6px;
+  font-size: 13.5px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--accent);
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-row-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Executive Clean Task Cards Grid */
+.task-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.task-card-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.task-card-item:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.task-card-item.priority-high {
+  border-left: 4px solid var(--status-pending);
+}
+
+.task-card-item.status-complete {
+  border-left: 4px solid var(--status-complete);
+  opacity: 0.85;
+}
+
+.task-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s ease;
+}
+
+.status-toggle-btn.pending {
+  color: var(--status-pending);
+  border-color: rgba(217, 98, 87, 0.3);
+}
+
+.status-toggle-btn.progress {
+  color: var(--status-progress);
+  border-color: rgba(212, 160, 55, 0.3);
+}
+
+.status-toggle-btn.complete {
+  color: var(--status-complete);
+  border-color: rgba(99, 156, 115, 0.3);
+}
+
+.status-toggle-btn .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.category-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  color: var(--quiet);
+  text-transform: uppercase;
+}
+
+.priority-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+}
+
+.priority-tag.high {
+  background: rgba(217, 98, 87, 0.15);
+  color: var(--status-pending);
+}
+
+.priority-tag.med {
+  background: rgba(212, 160, 55, 0.15);
+  color: var(--status-progress);
+}
+
+.priority-tag.low {
+  background: rgba(117, 111, 101, 0.15);
+  color: var(--quiet);
+}
+
+.task-card-title {
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.task-card-title.completed-text {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.task-card-detail {
+  font-size: 13.5px;
+  color: var(--quiet);
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.task-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.meta-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.due-date-chip,
+.resource-chip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--quiet);
+  text-decoration: none;
+}
+
+.resource-chip {
+  color: var(--accent);
+}
+
+.resource-chip:hover {
+  text-decoration: underline;
+}
+
+.task-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
 /* Tasks Toolbar & Filter Group Polish */
 .tasks-toolbar {
   display: flex;
@@ -5960,7 +6216,7 @@ h3 {
     gap: 6px !important;
   }
 
-  /* Tasks Toolbar & Filter Group Mobile Fix */
+  /* Tasks Toolbar & Filter Group Mobile 2x2 Grid Fix (All 4 Status Tabs Visible) */
   .tasks-toolbar {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -5969,31 +6225,55 @@ h3 {
 
   .filter-group {
     width: 100% !important;
-    display: flex !important;
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-    flex-wrap: nowrap !important;
-    padding: 4px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 6px !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .filter-group::-webkit-scrollbar {
-    display: none !important;
+    padding: 6px !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
   }
 
   .filter-btn {
-    flex: 0 0 auto !important;
-    white-space: nowrap !important;
-    padding: 6px 12px !important;
-    font-size: 12.5px !important;
-    height: 34px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    padding: 6px 4px !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
   }
 
   .task-search,
-  .category-select-wrapper,
+  .category-dropdown-wrapper,
+  .category-dropdown-wrapper button,
   .tasks-toolbar button {
+    width: 100% !important;
+  }
+
+  /* Create / Edit Task Modal Mobile Single Column Fix */
+  .task-modal-card {
+    width: 95vw !important;
+    padding: 16px !important;
+    margin: auto !important;
+  }
+
+  .form-row-3col,
+  .form-row-2col {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .modal-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .modal-actions button {
     width: 100% !important;
   }
 
