@@ -431,11 +431,16 @@ function App() {
   const handleResetData = () => {
     showCustomDialog({
       title: 'Purge Local Storage',
-      message: 'Are you sure you want to reset all local workspace records? This action will permanently erase your offline tasks, notes, and roadmaps.',
+      message: 'Are you sure you want to reset all local workspace records? This action will permanently erase your offline tasks, notes, roadmaps, and files.',
       type: 'danger',
       confirmLabel: 'Purge Storage',
       cancelLabel: 'Keep Data',
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          await daymarkDB.clearAllDatabaseData();
+        } catch (err) {
+          console.warn('Error clearing IndexedDB:', err);
+        }
         localStorage.clear();
         window.location.reload();
       }
@@ -772,6 +777,7 @@ function App() {
             onSaveNote={handleCreateTodayLogNote}
             roadmaps={roadmaps}
             onNavigate={setActivePage}
+            onShowDialog={showCustomDialog}
             mainFocus={mainFocus}
             setMainFocus={setMainFocus}
             focusDone={focusDone}
@@ -793,6 +799,7 @@ function App() {
             onAddTask={handleAddTask}
             onUpdateTask={handleUpdateTask}
             onDeleteTask={handleDeleteTask}
+            onShowDialog={showCustomDialog}
           />
         );
       case 'Roadmaps':
@@ -804,6 +811,7 @@ function App() {
             onUpdateMap={handleUpdateMap}
             onCreateMap={handleCreateRoadmap}
             onDeleteMap={handleDeleteRoadmap}
+            onShowDialog={showCustomDialog}
           />
         );
       case 'Notes':
@@ -813,6 +821,7 @@ function App() {
             onSaveNote={handleSaveNote}
             onCreateNote={handleCreateNote}
             onDeleteNote={handleDeleteNote}
+            onShowDialog={showCustomDialog}
           />
         );
       case 'Files':
@@ -822,6 +831,7 @@ function App() {
             onAddFile={handleAddFile}
             onUpdateFile={handleUpdateFile}
             onDeleteFile={handleDeleteFile}
+            onShowDialog={showCustomDialog}
           />
         );
       case 'Reports':

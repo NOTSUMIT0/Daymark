@@ -6476,6 +6476,76 @@ h3 {
   }
 }
 
+/* Universal Modal Header & Close Button Styling */
+.modal-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  width: 100% !important;
+  margin-bottom: 16px !important;
+  position: relative !important;
+}
+
+.modal-header div {
+  flex: 1;
+}
+
+.modal-header .close-btn,
+.modal-header .close,
+.modal-card .close-btn,
+.modal-card .close,
+.composer .close-btn,
+.composer .close,
+.dialog-close-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: var(--card) !important;
+  color: var(--quiet) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  position: static !important;
+  flex-shrink: 0 !important;
+}
+
+.modal-header .close-btn:hover,
+.modal-header .close:hover,
+.modal-card .close-btn:hover,
+.modal-card .close:hover,
+.composer .close-btn:hover,
+.composer .close:hover,
+.dialog-close-btn:hover {
+  background: var(--canvas) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+  transform: translateY(-1px);
+}
+
+/* Copy Export Button Emerald Green Feedback State */
+.copy-export-btn.copied-success {
+  background-color: #10b981 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.copy-export-btn.copied-success svg {
+  stroke: #ffffff !important;
+}
+
 
 
 

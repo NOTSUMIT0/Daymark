@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, MouseEvent, WheelEvent } from 'react';
 import { RoadmapMap, RoadmapNode, NodeStatus, NodeLink } from '../types';
 import { NodeEditorModal } from './NodeEditorModal';
+import { DialogOptions } from './AppDialogModal';
 
 interface RoadmapCanvasProps {
   map: RoadmapMap;
@@ -9,6 +10,7 @@ interface RoadmapCanvasProps {
   onUpdateMap: (updated: Partial<RoadmapMap>) => void;
   onCreateMap: () => void;
   onDeleteMap: (id: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
 const NODE_WIDTH = 240;
@@ -20,7 +22,8 @@ export function RoadmapCanvas({
   onSelectMap,
   onUpdateMap,
   onCreateMap,
-  onDeleteMap
+  onDeleteMap,
+  onShowDialog
 }: RoadmapCanvasProps) {
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -766,6 +769,7 @@ export function RoadmapCanvas({
           onSave={handleSaveNode}
           onDelete={handleDeleteNode}
           onClose={() => setEditingNode(null)}
+          onShowDialog={onShowDialog}
         />
       )}
     </div>

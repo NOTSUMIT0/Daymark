@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { Task, TaskPriority, NodeStatus } from '../types';
 import { CustomSelect } from '../components/CustomSelect';
+import { DialogOptions } from '../components/AppDialogModal';
 
 interface TasksPageProps {
   tasks: Task[];
   onAddTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   onUpdateTask: (task: Task) => void;
   onDeleteTask: (id: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
-export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: TasksPageProps) {
+export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask, onShowDialog }: TasksPageProps) {
   const [statusFilter, setStatusFilter] = useState<'all' | NodeStatus>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -357,7 +359,20 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
                       <button
                         type="button"
                         className="quiet-button danger-sm"
-                        onClick={() => onDeleteTask(t.id)}
+                        onClick={() => {
+                          if (onShowDialog) {
+                            onShowDialog({
+                              title: 'Delete Task Entry',
+                              message: `Are you sure you want to delete "${t.title}"? This action cannot be undone.`,
+                              type: 'danger',
+                              confirmLabel: 'Delete Task',
+                              cancelLabel: 'Cancel',
+                              onConfirm: () => onDeleteTask(t.id)
+                            });
+                          } else {
+                            onDeleteTask(t.id);
+                          }
+                        }}
                       >
                         Delete
                       </button>

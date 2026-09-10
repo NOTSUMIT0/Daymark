@@ -1,5 +1,6 @@
 import { RoadmapMap } from '../types';
 import { RoadmapCanvas } from '../components/RoadmapCanvas';
+import { DialogOptions } from '../components/AppDialogModal';
 
 interface RoadmapsPageProps {
   roadmaps: RoadmapMap[];
@@ -8,6 +9,7 @@ interface RoadmapsPageProps {
   onUpdateMap: (updated: Partial<RoadmapMap>) => void;
   onCreateMap: () => void;
   onDeleteMap: (id: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
 export function RoadmapsPage({
@@ -16,7 +18,8 @@ export function RoadmapsPage({
   onSelectMap,
   onUpdateMap,
   onCreateMap,
-  onDeleteMap
+  onDeleteMap,
+  onShowDialog
 }: RoadmapsPageProps) {
   const currentMap = roadmaps.find((m) => m.id === activeMapId) || roadmaps[0];
 
@@ -40,6 +43,7 @@ export function RoadmapsPage({
         onUpdateMap={onUpdateMap}
         onCreateMap={onCreateMap}
         onDeleteMap={onDeleteMap}
+        onShowDialog={onShowDialog}
       />
     </section>
   );

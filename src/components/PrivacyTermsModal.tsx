@@ -9,41 +9,44 @@ export function PrivacyTermsModal({ type, onClose }: PrivacyTermsModalProps) {
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
       <section className="composer legal-modal" onMouseDown={(e) => e.stopPropagation()}>
-        <button className="close" onClick={onClose} aria-label="Close modal">
-          ×
-        </button>
+        <div className="modal-header">
+          <div>
+            <p className="eyebrow">{type === 'privacy' ? 'PRIVACY & DATA BOUNDARY POLICY' : 'TERMS OF SERVICE'}</p>
+            <h3 style={{ margin: 0 }}>{type === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}</h3>
+          </div>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close modal">
+            ✕
+          </button>
+        </div>
+
         {type === 'privacy' ? (
-          <>
-            <p className="eyebrow">PRIVACY & DATA BOUNDARY POLICY</p>
-            <h2>Privacy Policy</h2>
-            <div className="legal-body">
-              <p>
-                <strong>Local-First Guarantee:</strong> Daymark stores all user data—including tasks, roadmaps, notes, work logs, and attachments—locally on your device.
-              </p>
-              <p>
-                <strong>No Unauthorized Telemetry:</strong> No personal logs or note text are transmitted to remote servers during Phase 0 or Phase 1.
-              </p>
-              <p>
-                <strong>Data Portability & Encryption:</strong> You retain complete ownership of your data. You may export or purge your local records at any time from the Settings page.
-              </p>
-            </div>
-          </>
+          <div className="legal-body">
+            <p>
+              <strong>100% Offline &amp; Local-First Storage:</strong> Daymark stores all user data—including tasks, roadmaps, notes, focus logs, and attachments—locally on your device (IndexedDB &amp; LocalStorage).
+            </p>
+            <p>
+              <strong>Zero Telemetry &amp; Data Mining:</strong> No personal logs, note content, or device activity are collected or transmitted to external servers. Your data stays entirely on your device.
+            </p>
+            <p>
+              <strong>Complete Ownership &amp; Portability:</strong> You maintain 100% ownership of your work. You can export complete JSON backups, CSV spreadsheets, and text reports, or purge local storage at any time from Settings.
+            </p>
+          </div>
         ) : (
-          <>
-            <p className="eyebrow">TERMS OF SERVICE</p>
-            <h2>Terms of Service</h2>
-            <div className="legal-body">
-              <p>
-                <strong>Open Source & Self-Hostable:</strong> Daymark is provided under open-source standards. You have full permission to host and run your personal instance.
-              </p>
-              <p>
-                <strong>Device Security Responsibility:</strong> As a local-first system, device-level security (disk encryption, strong lock passwords, SSH administrative key hygiene) remains the responsibility of the device operator.
-              </p>
-            </div>
-          </>
+          <div className="legal-body">
+            <p>
+              <strong>Local Workspace Governance:</strong> Daymark is provided as a local-first offline workspace tool. You retain full freedom to manage, export, and modify your local data records.
+            </p>
+            <p>
+              <strong>Device Security &amp; Backup Responsibility:</strong> Because Daymark operates offline on your device without cloud lock-in, maintaining device security and creating routine JSON data backups remains the responsibility of the device owner.
+            </p>
+            <p>
+              <strong>High Performance &amp; Offline Guarantee:</strong> Daymark works seamlessly without an internet connection, ensuring instant loading, zero cloud dependency, and total availability.
+            </p>
+          </div>
         )}
+
         <div className="modal-actions">
-          <button className="primary-button" onClick={onClose}>
+          <button type="button" className="primary-button" onClick={onClose}>
             I Understand
           </button>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { RoadmapNode, NodeStatus, NodeLink } from '../types';
+import { DialogOptions } from './AppDialogModal';
 
 interface NodeEditorModalProps {
   node: RoadmapNode;
@@ -7,6 +8,7 @@ interface NodeEditorModalProps {
   onSave: (updated: RoadmapNode) => void;
   onDelete: (id: string) => void;
   onClose: () => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
 export function NodeEditorModal({
@@ -14,7 +16,8 @@ export function NodeEditorModal({
   allNodes,
   onSave,
   onDelete,
-  onClose
+  onClose,
+  onShowDialog
 }: NodeEditorModalProps) {
   const [title, setTitle] = useState(node.title);
   const [detail, setDetail] = useState(node.detail);
@@ -50,13 +53,33 @@ export function NodeEditorModal({
     });
   };
 
+  const handleDeleteClick = () => {
+    if (onShowDialog) {
+      onShowDialog({
+        title: 'Delete Roadmap Node',
+        message: `Are you sure you want to delete node "${node.title}" from this roadmap graph?`,
+        type: 'danger',
+        confirmLabel: 'Delete Node',
+        cancelLabel: 'Cancel',
+        onConfirm: () => onDelete(node.id)
+      });
+    } else {
+      onDelete(node.id);
+    }
+  };
+
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
       <section className="composer" onMouseDown={(e) => e.stopPropagation()}>
-        <button className="close" onClick={onClose} aria-label="Close modal">
-          ×
-        </button>
-        <p className="eyebrow">EDIT ROADMAP NODE</p>
+        <div className="modal-header">
+          <div>
+            <p className="eyebrow">EDIT ROADMAP NODE</p>
+            <h3 style={{ margin: 0 }}>{node.title || 'Roadmap Node'}</h3>
+          </div>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close modal">
+            ✕
+          </button>
+        </div>
 
         <label>
           Node Name / Title
@@ -131,7 +154,7 @@ export function NodeEditorModal({
           <button
             type="button"
             className="quiet-button danger"
-            onClick={() => onDelete(node.id)}
+            onClick={handleDeleteClick}
           >
             Delete Node
           </button>

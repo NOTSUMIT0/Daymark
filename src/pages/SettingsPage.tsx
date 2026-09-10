@@ -184,16 +184,16 @@ export function SettingsPage({
         {/* Background Notifications & Task Alerts */}
         <section className="panel settings-panel">
           <p className="eyebrow">SYSTEM NOTIFICATIONS & REMINDERS</p>
-          <h2>Desktop & Mobile Background Alerts</h2>
+          <h2>System Notifications & Alerts</h2>
           <p className="panel-desc">
-            Daymark monitors your upcoming task due dates in the background with negligible RAM usage (~3MB), notifying you 1 day in advance and alerting you when focus sprints are ending.
+            Daymark monitors your upcoming task due dates in the background with minimal battery &amp; RAM usage, notifying you 1 day in advance and alerting you when focus sprints are ending.
           </p>
 
           <div className="setting-control-row">
             <div className="setting-info-text">
               <strong>Proactive Due Date Reminders (1 Day In Advance)</strong>
               <small className="setting-subtext">
-                Notifies your Windows OS or Android mobile device on the 10th when a task is due on the 11th.
+                Notifies your device proactively 1 day before tasks are due so you never miss an important milestone.
               </small>
             </div>
             <button
@@ -204,18 +204,18 @@ export function SettingsPage({
                 if (granted) {
                   sendNativeNotification(
                     'Daymark System Notification Test',
-                    'Desktop and Mobile proactive notifications are active! You will be notified 1 day before tasks are due.'
+                    'Proactive system notifications are active! You will be notified 1 day before tasks are due.'
                   );
                 } else if (onShowDialog) {
                   onShowDialog({
                     title: 'Notification Permission Required',
-                    message: 'Native OS notification permission was not granted. Please enable notifications in your OS/Device system settings.',
+                    message: 'System notification permission was not granted. Please enable notifications in your device system settings.',
                     type: 'danger'
                   });
                 }
               }}
             >
-              Test Native System Notification
+              Test System Notification
             </button>
           </div>
         </section>

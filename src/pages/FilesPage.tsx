@@ -3,17 +3,19 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import { FileItem } from '../types';
 import { CustomSelect } from '../components/CustomSelect';
+import { DialogOptions } from '../components/AppDialogModal';
 
 interface FilesPageProps {
   files: FileItem[];
   onAddFile: (file: Omit<FileItem, 'id' | 'uploadedAt'>) => void;
   onUpdateFile?: (file: FileItem) => void;
   onDeleteFile: (id: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
 const DEFAULT_CATEGORIES = ['Architecture', 'Design', 'Security', 'General'];
 
-export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: FilesPageProps) {
+export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShowDialog }: FilesPageProps) {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'name' | 'size'>('newest');
@@ -63,8 +65,22 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
 
   const handleDeleteCategory = (catToDelete: string) => {
     if (DEFAULT_CATEGORIES.includes(catToDelete)) return;
-    setCategories((prev) => prev.filter((c) => c !== catToDelete));
-    if (categoryFilter === catToDelete) setCategoryFilter('All');
+    if (onShowDialog) {
+      onShowDialog({
+        title: 'Delete Category',
+        message: `Are you sure you want to delete custom category "${catToDelete}"?`,
+        type: 'danger',
+        confirmLabel: 'Delete Category',
+        cancelLabel: 'Cancel',
+        onConfirm: () => {
+          setCategories((prev) => prev.filter((c) => c !== catToDelete));
+          if (categoryFilter === catToDelete) setCategoryFilter('All');
+        }
+      });
+    } else {
+      setCategories((prev) => prev.filter((c) => c !== catToDelete));
+      if (categoryFilter === catToDelete) setCategoryFilter('All');
+    }
   };
 
 
@@ -424,6 +440,11 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
             </div>
             {sortedFiles.map((f) => {
               const badge = getFileBadgeIcon(f.extension, f.type);
+              const isPdf = f.name.toLowerCase().endsWith('.pdf');
+              const isImg = f.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
+              const isTxt = f.name.match(/\.(txt|md|csv|json|js|ts|html|css|xml)$/i);
+              const canView = isPdf || isImg || isTxt;
+
               return (
                 <div key={f.id} className="list-row">
                   <div className="list-name-col" onClick={() => setViewerFile(f)}>
@@ -432,11 +453,11 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
                     </span>
                     <strong className="list-file-name">{f.name}</strong>
                   </div>
-                  <div className="list-cat-col">
+                  <div className="list-category-col">
                     <select
-                      className="card-category-select"
                       value={f.category}
                       onChange={(e) => handleFileCategoryChange(f, e.target.value)}
+                      className="list-category-select"
                     >
                       {categories.map((c) => (
                         <option key={c} value={c}>
@@ -448,13 +469,15 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
                   <div className="list-size-col">{f.size}</div>
                   <div className="list-date-col">{f.uploadedAt}</div>
                   <div className="list-actions-col">
-                    <button
-                      type="button"
-                      className="quiet-button sm-btn"
-                      onClick={() => setViewerFile(f)}
-                    >
-                      View
-                    </button>
+                    {canView && (
+                      <button
+                        type="button"
+                        className="quiet-button sm-btn"
+                        onClick={() => setViewerFile(f)}
+                      >
+                        View
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="quiet-button sm-btn"
@@ -465,7 +488,20 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
                     <button
                       type="button"
                       className="quiet-button danger-sm sm-btn"
-                      onClick={() => onDeleteFile(f.id)}
+                      onClick={() => {
+                        if (onShowDialog) {
+                          onShowDialog({
+                            title: 'Delete File Record',
+                            message: `Are you sure you want to delete file "${f.name}"? This action cannot be undone.`,
+                            type: 'danger',
+                            confirmLabel: 'Delete File',
+                            cancelLabel: 'Cancel',
+                            onConfirm: () => onDeleteFile(f.id)
+                          });
+                        } else {
+                          onDeleteFile(f.id);
+                        }
+                      }}
                     >
                       Delete
                     </button>
@@ -481,10 +517,15 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
       {showUploadModal && (
         <div className="modal-backdrop" onMouseDown={() => setShowUploadModal(false)}>
           <section className="composer upload-modal" onMouseDown={(e) => e.stopPropagation()}>
-            <button className="close" onClick={() => setShowUploadModal(false)}>
-              ×
-            </button>
-            <p className="eyebrow">UPLOAD NEW FILE RECORD</p>
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">UPLOAD NEW FILE RECORD</p>
+                <h3 style={{ margin: 0 }}>Add Files to Workspace</h3>
+              </div>
+              <button type="button" className="close-btn" onClick={() => setShowUploadModal(false)} aria-label="Close modal">
+                ✕
+              </button>
+            </div>
 
             <div
               className="dropzone-area"

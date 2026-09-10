@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Task, Note, RoadmapMap, NodeStatus } from '../types';
 import { CustomSelect } from '../components/CustomSelect';
+import { DialogOptions } from '../components/AppDialogModal';
 
 interface TodayPageProps {
   tasks: Task[];
@@ -10,6 +11,7 @@ interface TodayPageProps {
   onSaveNote: (title: string, content: string) => void;
   roadmaps: RoadmapMap[];
   onNavigate: (page: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 
   // Global Focus Timer Props
   mainFocus: string;
@@ -62,6 +64,7 @@ export function TodayPage({
   onSaveNote,
   roadmaps,
   onNavigate,
+  onShowDialog,
   mainFocus,
   setMainFocus,
   focusDone,
@@ -181,7 +184,22 @@ export function TodayPage({
   };
 
   const handleDeleteRoutine = (id: string) => {
-    setRoutinesList((prev) => prev.filter((item) => item.id !== id));
+    const routine = routinesList.find((r) => r.id === id);
+    const label = routine ? routine.label : 'this ritual';
+    if (onShowDialog) {
+      onShowDialog({
+        title: 'Delete Daily Ritual',
+        message: `Are you sure you want to delete ritual "${label}"?`,
+        type: 'danger',
+        confirmLabel: 'Delete Ritual',
+        cancelLabel: 'Cancel',
+        onConfirm: () => {
+          setRoutinesList((prev) => prev.filter((item) => item.id !== id));
+        }
+      });
+    } else {
+      setRoutinesList((prev) => prev.filter((item) => item.id !== id));
+    }
   };
 
   const handleAddRoutine = (e: React.FormEvent) => {

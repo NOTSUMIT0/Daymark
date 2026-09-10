@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect, MouseEvent } from 'react';
 import { Note, NoteFolder } from '../types';
 import { CustomSelect } from '../components/CustomSelect';
+import { DialogOptions } from '../components/AppDialogModal';
 
 interface NotesPageProps {
   notes: Note[];
   onSaveNote: (note: Note) => void;
   onCreateNote: (folderId?: string) => void;
   onDeleteNote: (id: string) => void;
+  onShowDialog?: (opts: Omit<DialogOptions, 'isOpen'>) => void;
 }
 
 const DEFAULT_FOLDERS: NoteFolder[] = [
@@ -266,25 +268,61 @@ function ImageCropModal({ imageSrc, onSave, onClose }: ImageCropModalProps) {
   );
 }
 
-export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: NotesPageProps) {
+export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote, onShowDialog }: NotesPageProps) {
   const [activeId, setActiveId] = useState<string>(notes[0]?.id || '');
   const [searchTerm, setSearchTerm] = useState('');
 
   // Folders State
   const [folders, setFolders] = useState<NoteFolder[]>(() => {
     try {
-      const raw = localStorage.getItem('daymark.folders');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {}
+      const stored = localStorage.getItem('daymark.noteFolders');
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // Fallback
+    }
     return DEFAULT_FOLDERS;
   });
 
   const [selectedFolderId, setSelectedFolderId] = useState<string>('all');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('daymark.noteFolders', JSON.stringify(folders));
+  }, [folders]);
+
+  const handleCreateFolder = () => {
+    if (!newFolderName.trim()) return;
+    const newFolder: NoteFolder = {
+      id: `f_${Date.now()}`,
+      name: newFolderName.trim()
+    };
+    setFolders((prev) => [...prev, newFolder]);
+    setNewFolderName('');
+    setIsCreatingFolder(false);
+    setSelectedFolderId(newFolder.id);
+  };
+
+  const handleDeleteFolder = (folderId: string) => {
+    const targetFolder = folders.find((f) => f.id === folderId);
+    const folderName = targetFolder ? targetFolder.name : 'this folder';
+    if (onShowDialog) {
+      onShowDialog({
+        title: 'Delete Folder',
+        message: `Are you sure you want to delete folder "${folderName}"? Notes inside will be unassigned.`,
+        type: 'danger',
+        confirmLabel: 'Delete Folder',
+        cancelLabel: 'Cancel',
+        onConfirm: () => {
+          setFolders((prev) => prev.filter((f) => f.id !== folderId));
+          if (selectedFolderId === folderId) setSelectedFolderId('all');
+        }
+      });
+    } else {
+      setFolders((prev) => prev.filter((f) => f.id !== folderId));
+      if (selectedFolderId === folderId) setSelectedFolderId('all');
+    }
+  };
 
   const [selectedImgElement, setSelectedImgElement] = useState<HTMLImageElement | null>(null);
   const [isCropping, setIsCropping] = useState(false);
@@ -330,23 +368,7 @@ export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: Not
     return n.folderId === selectedFolderId;
   });
 
-  const handleCreateFolder = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newFolderName.trim()) return;
-    const newFolder: NoteFolder = {
-      id: `f_${Date.now()}`,
-      name: newFolderName.trim()
-    };
-    setFolders((prev) => [...prev, newFolder]);
-    setNewFolderName('');
-    setIsCreatingFolder(false);
-    setSelectedFolderId(newFolder.id);
-  };
 
-  const handleDeleteFolder = (folderId: string) => {
-    setFolders((prev) => prev.filter((f) => f.id !== folderId));
-    if (selectedFolderId === folderId) setSelectedFolderId('all');
-  };
 
 
   const saveCurrentContent = () => {
@@ -1203,7 +1225,20 @@ export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: Not
                 <button
                   type="button"
                   className="quiet-button danger"
-                  onClick={() => onDeleteNote(activeNote.id)}
+                  onClick={() => {
+                    if (onShowDialog) {
+                      onShowDialog({
+                        title: 'Delete Note',
+                        message: `Are you sure you want to delete note "${activeNote.title}"? This action cannot be undone.`,
+                        type: 'danger',
+                        confirmLabel: 'Delete Note',
+                        cancelLabel: 'Cancel',
+                        onConfirm: () => onDeleteNote(activeNote.id)
+                      });
+                    } else {
+                      onDeleteNote(activeNote.id);
+                    }
+                  }}
                 >
                   Delete Note
                 </button>

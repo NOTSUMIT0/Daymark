@@ -124,6 +124,21 @@ class DaymarkDB {
     };
   }
 
+  async clearAllDatabaseData(): Promise<void> {
+    const db = await this.initDB();
+    const storeNames = ['roadmaps', 'tasks', 'notes', 'files', 'kv_store'];
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeNames, 'readwrite');
+      storeNames.forEach((name) => {
+        if (db.objectStoreNames.contains(name)) {
+          tx.objectStore(name).clear();
+        }
+      });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   async importFullPayload(payload: StorageDataPayload): Promise<void> {
     if (payload.roadmaps && Array.isArray(payload.roadmaps)) {
       await this.setAll('roadmaps', payload.roadmaps);
