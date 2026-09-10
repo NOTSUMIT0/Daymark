@@ -38,6 +38,8 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { MobileNav } from './components/MobileNav';
 import { PrivacyTermsModal } from './components/PrivacyTermsModal';
+import { AppDialogModal, DialogOptions } from './components/AppDialogModal';
+import { AppExportModal } from './components/AppExportModal';
 
 import { TodayPage } from './pages/TodayPage';
 import { TasksPage } from './pages/TasksPage';
@@ -50,7 +52,6 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { CommandPaletteModal } from './components/CommandPaletteModal';
 import { SplashScreen } from './components/SplashScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { AppDialogModal, DialogOptions } from './components/AppDialogModal';
 
 function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -58,6 +59,20 @@ function App() {
     isOpen: false,
     title: '',
     message: ''
+  });
+
+  const [globalExportModal, setGlobalExportModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    filename: string;
+    content: string;
+    mimeType: string;
+  }>({
+    isOpen: false,
+    title: '',
+    filename: '',
+    content: '',
+    mimeType: 'text/plain'
   });
 
   const showCustomDialog = (opts: Omit<DialogOptions, 'isOpen'>) => {
@@ -356,7 +371,61 @@ function App() {
     const fullBackup = { ...payload, checksum };
 
     const jsonStr = JSON.stringify(fullBackup, null, 2);
-    downloadFile(`Daymark_Backup_${new Date().toISOString().split('T')[0]}.json`, jsonStr, 'application/json');
+    const filename = `Daymark_Backup_${new Date().toISOString().split('T')[0]}.json`;
+
+    setGlobalExportModal({
+      isOpen: true,
+      title: 'Export JSON Backup',
+      filename,
+      content: jsonStr,
+      mimeType: 'application/json'
+    });
+    downloadFile(filename, jsonStr, 'application/json');
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['ID', 'Title', 'Priority', 'Status', 'Category', 'Due Date', 'Created At'];
+    const rows = tasks.map((t) => [
+      `"${t.id}"`,
+      `"${t.title.replace(/"/g, '""')}"`,
+      `"${t.priority}"`,
+      `"${t.status}"`,
+      `"${(t.category || '').replace(/"/g, '""')}"`,
+      `"${t.dueDate || ''}"`,
+      `"${t.createdAt}"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const filename = `Daymark_Tasks_${new Date().toISOString().split('T')[0]}.csv`;
+
+    setGlobalExportModal({
+      isOpen: true,
+      title: 'Export Tasks CSV Spreadsheet',
+      filename,
+      content: csvContent,
+      mimeType: 'text/csv'
+    });
+    downloadFile(filename, csvContent, 'text/csv;charset=utf-8;');
+  };
+
+  const handleExportText = () => {
+    const content = notes
+      .map(
+        (n) =>
+          `==================================================\nTITLE: ${n.title}\nUPDATED: ${n.updatedAt}\n==================================================\n${n.content}\n\n`
+      )
+      .join('\n');
+
+    const filename = `Daymark_Notes_${new Date().toISOString().split('T')[0]}.txt`;
+
+    setGlobalExportModal({
+      isOpen: true,
+      title: 'Export Notes Text Summary',
+      filename,
+      content,
+      mimeType: 'text/plain'
+    });
+    downloadFile(filename, content, 'text/plain;charset=utf-8;');
   };
 
   const handleResetData = () => {
@@ -775,8 +844,8 @@ function App() {
             onExportData={handleExportBackup}
             onImportData={handleImportBackup}
             onResetData={handleResetData}
-            onExportCSV={() => exportTasksToCSV(tasks)}
-            onExportText={() => exportNotesToText(notes)}
+            onExportCSV={handleExportCSV}
+            onExportText={handleExportText}
             onShowDialog={showCustomDialog}
             tasksCount={tasks.length}
             roadmapsCount={roadmaps.length}
@@ -979,6 +1048,16 @@ function App() {
       <AppDialogModal
         dialog={dialogState}
         onClose={() => setDialogState((prev) => ({ ...prev, isOpen: false }))}
+      />
+
+      {/* Global Export & Portability Modal for Mobile & Web */}
+      <AppExportModal
+        isOpen={globalExportModal.isOpen}
+        title={globalExportModal.title}
+        filename={globalExportModal.filename}
+        content={globalExportModal.content}
+        mimeType={globalExportModal.mimeType}
+        onClose={() => setGlobalExportModal((prev) => ({ ...prev, isOpen: false }))}
       />
     </main>
   );

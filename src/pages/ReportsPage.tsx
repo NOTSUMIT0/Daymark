@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Task, RoadmapMap, Note, FileItem } from '../types';
 import { downloadFile } from '../utils/storage';
+import { AppExportModal } from '../components/AppExportModal';
 
 interface ReportsPageProps {
   tasks: Task[];
@@ -13,6 +14,19 @@ type TimeHorizon = 'weekly' | 'monthly' | 'all-time';
 
 export function ReportsPage({ tasks, roadmaps, notes, files = [] }: ReportsPageProps) {
   const [horizon, setHorizon] = useState<TimeHorizon>('weekly');
+  const [exportModal, setExportModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    filename: string;
+    content: string;
+    mimeType: string;
+  }>({
+    isOpen: false,
+    title: '',
+    filename: '',
+    content: '',
+    mimeType: 'text/plain'
+  });
 
   // Filter tasks based on selected time horizon
   const filteredTasks = useMemo(() => {
@@ -273,14 +287,61 @@ ${recommendations.map((r) => `   * [${r.title}] ${r.desc}`).join('\n')}
 ================================================================================
     `.trim();
 
-    downloadFile(
-      `Daymark_${horizon.toUpperCase()}_Report_${new Date().toISOString().split('T')[0]}.txt`,
-      summaryText,
-      'text/plain;charset=utf-8;'
-    );
+    const filename = `Daymark_${horizon.toUpperCase()}_Report_${new Date().toISOString().split('T')[0]}.txt`;
+    setExportModal({
+      isOpen: true,
+      title: 'Executive Workplace Analytics Report',
+      filename,
+      content: summaryText,
+      mimeType: 'text/plain'
+    });
+    downloadFile(filename, summaryText, 'text/plain;charset=utf-8;');
   };
 
   const handlePrintPdf = () => {
+    const summaryText = `
+================================================================================
+DAYMARK ECOSYSTEM — EXECUTIVE WORKPLACE & ANALYTICS REPORT
+================================================================================
+Report Scope: ${periodInfo.label.toUpperCase()}
+Date Range: ${periodInfo.range}
+Execution Velocity: ${periodInfo.velocity}
+Generated On: ${new Date().toLocaleString()}
+Productivity Score: ${productivityScore}% [${scoreTag.label}]
+
+1. TASK EXECUTION METRICS:
+   - Total Tasks Logged: ${totalTasks}
+   - Completed Tasks: ${completedTasks} (${taskCompletionRate}%)
+   - In Progress: ${inProgressTasks}
+   - Pending: ${pendingTasks}
+   - Overdue Tasks: ${overdueTasks.length}
+   - High Priority Completion: ${highPriorityDone} / ${highPriorityTotal} (${highPriorityRate}%)
+
+2. ROADMAP BLUEPRINT PROGRESS:
+   - Total Roadmap Blueprints: ${roadmaps.length}
+   - Total Milestone Nodes: ${totalNodes}
+   - Completed Milestones: ${completedNodes} (${roadmapCompletionRate}%)
+
+3. KNOWLEDGE & FILE REPOSITORY:
+   - Total Notes & Journals: ${notes.length}
+   - Total File Attachments: ${files.length}
+
+4. ACCOMPLISHMENTS SUMMARY:
+${accomplishments.map((a) => `   * ${a}`).join('\n')}
+
+5. ACTIONABLE STRATEGIC RECOMMENDATIONS:
+${recommendations.map((r) => `   * [${r.title}] ${r.desc}`).join('\n')}
+================================================================================
+    `.trim();
+
+    setExportModal({
+      isOpen: true,
+      title: 'Print / Export PDF Summary',
+      filename: `Daymark_${horizon.toUpperCase()}_Report_${new Date().toISOString().split('T')[0]}.txt`,
+      content: summaryText,
+      mimeType: 'text/plain'
+    });
+
     try {
       window.print();
     } catch (err) {
@@ -669,6 +730,15 @@ ${recommendations.map((r) => `   * [${r.title}] ${r.desc}`).join('\n')}
           </div>
         </div>
       </section>
+
+      <AppExportModal
+        isOpen={exportModal.isOpen}
+        title={exportModal.title}
+        filename={exportModal.filename}
+        content={exportModal.content}
+        mimeType={exportModal.mimeType}
+        onClose={() => setExportModal((prev) => ({ ...prev, isOpen: false }))}
+      />
     </section>
   );
 }
