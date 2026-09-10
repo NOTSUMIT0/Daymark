@@ -181,7 +181,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
             ref={inputRef}
             type="text"
             className="command-palette-input"
-            placeholder="Type a command or search tasks, notes, roadmaps, files... (Press Esc to close)"
+            placeholder="Type a command or search tasks, notes, roadmaps..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -189,6 +189,9 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
             }}
           />
           <kbd className="esc-key-hint">ESC</kbd>
+          <button type="button" className="command-palette-mobile-close" onClick={onClose} aria-label="Close search">
+            ✕
+          </button>
         </div>
 
         {/* Search Results List */}

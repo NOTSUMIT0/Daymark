@@ -4302,11 +4302,11 @@ h3 {
 .focus-mini-player-widget {
   position: fixed;
   z-index: 10000;
-  width: 380px;
+  width: 390px;
   background: var(--paper);
-  border: 1px solid var(--accent);
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(147, 62, 45, 0.2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22), 0 0 0 1px var(--line);
   backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
@@ -4336,7 +4336,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(147, 62, 45, 0.08);
+  background: var(--canvas);
   border-bottom: 1px solid var(--line);
   cursor: grab;
 }
@@ -4349,14 +4349,14 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   color: var(--accent);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .drag-grip-icon {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .mini-player-header-actions {
@@ -4380,7 +4380,7 @@ h3 {
 }
 
 .mini-player-icon-btn:hover {
-  background: rgba(147, 62, 45, 0.15);
+  background: rgba(147, 62, 45, 0.12);
   color: var(--accent);
 }
 
@@ -4390,17 +4390,17 @@ h3 {
 }
 
 .mini-player-body {
-  padding: 14px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 /* Spotify / Apple Music Style Artwork / Ring Disc */
 .mini-player-disc {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background: var(--canvas);
   border: 2.5px solid var(--accent);
@@ -4408,7 +4408,7 @@ h3 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(147, 62, 45, 0.25);
+  box-shadow: 0 4px 12px rgba(147, 62, 45, 0.2);
   transition: transform 0.3s ease;
 }
 
@@ -4438,7 +4438,7 @@ h3 {
 }
 
 .mini-player-focus-text {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--ink);
   white-space: nowrap;
@@ -4453,35 +4453,37 @@ h3 {
 }
 
 .mini-player-timer-digits {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   font-family: 'Source Code Pro', monospace, sans-serif;
   color: var(--accent);
   letter-spacing: -0.02em;
   line-height: 1.1;
+  margin: 2px 0;
 }
 
 .mini-player-sprint-tag {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--quiet);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .mini-player-controls {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 12px 14px;
   background: var(--canvas);
   border-top: 1px solid var(--line);
 }
 
 .mini-player-btn {
   flex: 1;
-  height: 32px;
-  padding: 0 8px;
-  font-size: 11.5px;
+  height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
   font-weight: 600;
   border-radius: 6px;
   display: inline-flex;
@@ -4956,9 +4958,16 @@ h3 {
     align-items: flex-start !important;
   }
 
-  .focus-mini-player-widget {
-    width: 92% !important;
-    left: 4% !important;
+  /* Focus Mini-Player is Desktop Only (Mobile Widget will be created in future release) */
+  .focus-mini-player-widget,
+  .popout-trigger-btn {
+    display: none !important;
+  }
+
+  /* Search Shortcut Keys are Desktop Only */
+  .esc-key-hint,
+  .command-palette-footer {
+    display: none !important;
   }
 
   /* Notes Page Mobile Interface & Free Writing Space Fix */
