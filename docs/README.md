@@ -13,7 +13,7 @@ The included app is an interactive Phase 1 prototype. It supports daily task rec
 3. Run `npm run dev` and open the local address shown.
 4. Run `npm run build` before sharing a release build.
 
-Read [the product plan](docs/PRODUCT_PLAN.md) before beginning Phase 2.
+Read [the product plan](PRODUCT_PLAN.md) and [the execution guide](EXECUTION_GUIDE.md) before beginning Phase 2.
 
 ## Project decisions
 
