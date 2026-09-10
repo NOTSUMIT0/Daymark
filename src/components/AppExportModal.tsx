@@ -95,7 +95,7 @@ export function AppExportModal({
                   </>
                 )}
               </svg>
-              <span>{copied ? '✓ Copied to Clipboard!' : 'Copy to Clipboard'}</span>
+              <span>{copied ? 'Copied to Clipboard!' : 'Copy to Clipboard'}</span>
             </button>
 
             <button

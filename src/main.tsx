@@ -380,7 +380,6 @@ function App() {
       content: jsonStr,
       mimeType: 'application/json'
     });
-    downloadFile(filename, jsonStr, 'application/json');
   };
 
   const handleExportCSV = () => {
@@ -405,7 +404,6 @@ function App() {
       content: csvContent,
       mimeType: 'text/csv'
     });
-    downloadFile(filename, csvContent, 'text/csv;charset=utf-8;');
   };
 
   const handleExportText = () => {
@@ -425,7 +423,6 @@ function App() {
       content,
       mimeType: 'text/plain'
     });
-    downloadFile(filename, content, 'text/plain;charset=utf-8;');
   };
 
   const handleResetData = () => {

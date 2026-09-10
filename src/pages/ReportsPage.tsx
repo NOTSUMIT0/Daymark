@@ -295,7 +295,6 @@ ${recommendations.map((r) => `   * [${r.title}] ${r.desc}`).join('\n')}
       content: summaryText,
       mimeType: 'text/plain'
     });
-    downloadFile(filename, summaryText, 'text/plain;charset=utf-8;');
   };
 
   const handlePrintPdf = () => {
