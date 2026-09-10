@@ -6359,8 +6359,120 @@ h3 {
     gap: 10px !important;
   }
 
-  .actions-row button {
+/* Universal CustomSelect Component Styling (Desktop & Mobile Unified) */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.custom-select-trigger:hover,
+.custom-select-container.is-open .custom-select-trigger {
+  border-color: var(--accent);
+  background: var(--paper);
+}
+
+.custom-select-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-select-arrow {
+  flex-shrink: 0;
+  color: var(--quiet);
+  transition: transform 0.2s ease;
+}
+
+.custom-select-container.is-open .custom-select-arrow {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  z-index: 10500;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 220px;
+  overflow-y: auto;
+  animation: slideUpCard 0.15s ease-out;
+}
+
+.custom-select-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  width: 100%;
+}
+
+.custom-select-item:hover,
+.custom-select-item.active {
+  background: var(--canvas);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.custom-select-check {
+  color: var(--status-complete);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* Routine Form Mobile Fix */
+@media (max-width: 768px) {
+  .add-routine-form {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .add-routine-form input,
+  .add-routine-form button {
     width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .add-routine-form button {
+    height: 40px !important;
   }
 }
 

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Task, TaskPriority, NodeStatus } from '../types';
+import { CustomSelect } from '../components/CustomSelect';
 
 interface TasksPageProps {
   tasks: Task[];
@@ -409,40 +410,37 @@ export function TasksPage({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Task
               <div className="form-row-3col">
                 <label className="form-label">
                   Category
-                  <select className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
-                    <option value="Development">Development</option>
-                    <option value="Design">Design</option>
-                    <option value="Architecture">Architecture</option>
-                    <option value="Security">Security</option>
-                    <option value="Planning">Planning</option>
-                    <option value="General">General</option>
-                  </select>
+                  <CustomSelect
+                    value={category}
+                    options={['Development', 'Design', 'Architecture', 'Security', 'Planning', 'General']}
+                    onChange={(val) => setCategory(val)}
+                  />
                 </label>
 
                 <label className="form-label">
                   Priority Level
-                  <select
-                    className="form-select"
+                  <CustomSelect
                     value={priority}
-                    onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                  >
-                    <option value="high">High Priority</option>
-                    <option value="med">Medium Priority</option>
-                    <option value="low">Low Priority</option>
-                  </select>
+                    options={[
+                      { value: 'high', label: 'High Priority' },
+                      { value: 'med', label: 'Medium Priority' },
+                      { value: 'low', label: 'Low Priority' }
+                    ]}
+                    onChange={(val) => setPriority(val as TaskPriority)}
+                  />
                 </label>
 
                 <label className="form-label">
                   Status
-                  <select
-                    className="form-select"
+                  <CustomSelect
                     value={status}
-                    onChange={(e) => setStatus(e.target.value as NodeStatus)}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="progress">In Progress</option>
-                    <option value="complete">Completed</option>
-                  </select>
+                    options={[
+                      { value: 'pending', label: 'Pending' },
+                      { value: 'progress', label: 'In Progress' },
+                      { value: 'complete', label: 'Completed' }
+                    ]}
+                    onChange={(val) => setStatus(val as NodeStatus)}
+                  />
                 </label>
               </div>
 

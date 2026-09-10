@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Task, Note, RoadmapMap, NodeStatus } from '../types';
+import { CustomSelect } from '../components/CustomSelect';
 
 interface TodayPageProps {
   tasks: Task[];
@@ -441,15 +442,16 @@ export function TodayPage({
               value={quickTitle}
               onChange={(e) => setQuickTitle(e.target.value)}
             />
-            <select
+            <CustomSelect
               className="quick-priority-select"
               value={quickPriority}
-              onChange={(e) => setQuickPriority(e.target.value as 'high' | 'med' | 'low')}
-            >
-              <option value="high">High Priority</option>
-              <option value="med">Normal</option>
-              <option value="low">Low</option>
-            </select>
+              options={[
+                { value: 'high', label: 'High Priority' },
+                { value: 'med', label: 'Normal Priority' },
+                { value: 'low', label: 'Low Priority' }
+              ]}
+              onChange={(val) => setQuickPriority(val as 'high' | 'med' | 'low')}
+            />
             <button type="submit" className="primary-button quick-add-btn">
               Add
             </button>

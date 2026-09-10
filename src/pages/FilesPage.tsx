@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import { FileItem } from '../types';
+import { CustomSelect } from '../components/CustomSelect';
 
 interface FilesPageProps {
   files: FileItem[];
@@ -290,16 +291,17 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <select
-            className="sort-select"
+          <CustomSelect
+            className="sort-select-custom"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-          >
-            <option value="newest">Sort: Newest First</option>
-            <option value="oldest">Sort: Oldest First</option>
-            <option value="name">Sort: Name (A-Z)</option>
-            <option value="size">Sort: Size (Largest)</option>
-          </select>
+            options={[
+              { value: 'newest', label: 'Sort: Newest First' },
+              { value: 'oldest', label: 'Sort: Oldest First' },
+              { value: 'name', label: 'Sort: Name (A-Z)' },
+              { value: 'size', label: 'Sort: Size (Largest)' }
+            ]}
+            onChange={(val) => setSortBy(val as any)}
+          />
 
           <div className="view-mode-toggle">
             <button
@@ -517,16 +519,11 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile }: File
 
             <label style={{ marginTop: '14px' }}>
               Assign Category
-              <select
+              <CustomSelect
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                options={categories}
+                onChange={(val) => setSelectedCategory(val)}
+              />
             </label>
 
             <div className="modal-actions" style={{ marginTop: '16px' }}>

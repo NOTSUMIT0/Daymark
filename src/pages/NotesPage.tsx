@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect, MouseEvent } from 'react';
 import { Note, NoteFolder } from '../types';
+import { CustomSelect } from '../components/CustomSelect';
 
 interface NotesPageProps {
   notes: Note[];
@@ -831,20 +832,16 @@ export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: Not
               {/* Editor Top Control Bar */}
               <div className="editor-toolbar">
                 <div className="folder-select-group">
-                  <label htmlFor="folder-select">Folder:</label>
-                  <select
-                    id="folder-select"
-                    className="folder-select"
+                  <label>Folder:</label>
+                  <CustomSelect
+                    className="folder-select-custom"
                     value={activeNote.folderId || ''}
-                    onChange={(e) => handleFolderChange(e.target.value)}
-                  >
-                    <option value="">Unorganized</option>
-                    {folders.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
+                    options={[
+                      { value: '', label: 'Unorganized' },
+                      ...folders.map((f) => ({ value: f.id, label: f.name }))
+                    ]}
+                    onChange={(val) => handleFolderChange(val)}
+                  />
                 </div>
               </div>
 
@@ -998,30 +995,32 @@ export function NotesPage({ notes, onSaveNote, onCreateNote, onDeleteNote }: Not
               {/* Rich Text Formatting Toolbar */}
               <div className="rich-formatting-toolbar">
                 <div className="tool-group">
-                  <select
-                    className="format-dropdown"
-                    onChange={(e) => execFormat('formatBlock', e.target.value)}
-                    defaultValue="p"
-                    title="Font Style / Heading"
-                  >
-                    <option value="p">Normal Text</option>
-                    <option value="h1">Heading 1</option>
-                    <option value="h2">Heading 2</option>
-                    <option value="h3">Heading 3</option>
-                    <option value="blockquote">Quote</option>
-                  </select>
+                  <CustomSelect
+                    className="format-dropdown-custom"
+                    value="p"
+                    placeholder="Font Style"
+                    options={[
+                      { value: 'p', label: 'Normal Text' },
+                      { value: 'h1', label: 'Heading 1' },
+                      { value: 'h2', label: 'Heading 2' },
+                      { value: 'h3', label: 'Heading 3' },
+                      { value: 'blockquote', label: 'Quote' }
+                    ]}
+                    onChange={(val) => execFormat('formatBlock', val)}
+                  />
 
-                  <select
-                    className="format-dropdown"
-                    onChange={(e) => execFormat('fontSize', e.target.value)}
-                    defaultValue="3"
-                    title="Font Size"
-                  >
-                    <option value="1">Small</option>
-                    <option value="3">Normal</option>
-                    <option value="5">Large</option>
-                    <option value="7">Huge</option>
-                  </select>
+                  <CustomSelect
+                    className="format-dropdown-custom"
+                    value="3"
+                    placeholder="Font Size"
+                    options={[
+                      { value: '1', label: 'Small' },
+                      { value: '3', label: 'Normal' },
+                      { value: '5', label: 'Large' },
+                      { value: '7', label: 'Huge' }
+                    ]}
+                    onChange={(val) => execFormat('fontSize', val)}
+                  />
                 </div>
 
                 <div className="tool-group">
