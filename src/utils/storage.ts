@@ -307,15 +307,38 @@ export function downloadFile(filename: string, content: string, mimeType: string
 }
 
 /**
- * Advanced file download with Native File System Access Picker API (Save As location dialog)
- * with robust fallback for all platforms.
+ * Advanced file download with Native Web Share API (Android/iOS Mobile File Save Sheet)
+ * & Native File System Access Picker API (Desktop Save As dialog) with multi-level fallback.
  */
 export async function downloadFileWithLocationPicker(
   filename: string,
   content: string,
   mimeType: string
 ): Promise<boolean> {
-  // Try Native File System Access API (showSaveFilePicker) if available
+  const cleanMime = mimeType || 'text/plain';
+
+  // 1. Mobile Native File Save / Share Sheet (Android & iOS Native WebViews & Mobile Browsers)
+  if (typeof navigator !== 'undefined' && navigator.share && typeof File !== 'undefined') {
+    try {
+      const file = new File([content], filename, { type: cleanMime });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: filename,
+          text: `Daymark Workspace Export: ${filename}`
+        });
+        return true;
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        // User closed native Android save/share dialog
+        return false;
+      }
+      console.warn('Mobile Web Share API failed, falling through to File Picker / Blob:', err);
+    }
+  }
+
+  // 2. Desktop File System Access API (showSaveFilePicker for Chrome / Edge desktop)
   if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
     try {
       const ext = filename.includes('.') ? filename.split('.').pop() || 'txt' : 'txt';
@@ -325,7 +348,7 @@ export async function downloadFileWithLocationPicker(
           {
             description: 'Save Data Export File',
             accept: {
-              [mimeType || 'text/plain']: [`.${ext}`]
+              [cleanMime]: [`.${ext}`]
             }
           }
         ]
@@ -336,15 +359,15 @@ export async function downloadFileWithLocationPicker(
       return true;
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        // User cancelled the file picker dialog
+        // User cancelled desktop File Explorer dialog
         return false;
       }
       console.warn('showSaveFilePicker failed or unsupported, executing Blob fallback:', err);
     }
   }
 
-  // Fallback: standard Blob download
-  downloadFile(filename, content, mimeType);
+  // 3. Fallback: Blob URL download & Data URI fallback
+  downloadFile(filename, content, cleanMime);
   return true;
 }
 

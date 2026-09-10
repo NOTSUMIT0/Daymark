@@ -65,7 +65,6 @@ export function AppExportModal({
         <div className="export-modal-body">
           <div className="export-filename-bar">
             <span className="export-filename-label">FILE: <strong>{filename}</strong></span>
-            {copied && <span className="copied-toast-pill">Copied to Clipboard! ✓</span>}
           </div>
 
           <p className="export-modal-hint">
