@@ -31,15 +31,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, duration
   return (
     <div className={`splash-screen-overlay ${fadeOut ? 'fade-out' : ''}`}>
       <div className="splash-card">
-        {/* Animated Terracotta & Ink Emblem */}
-        <div className="splash-logo-ring">
-          <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
-            <rect width="48" height="48" rx="14" fill="#24221e" />
-            <rect x="1" y="1" width="46" height="46" rx="13" stroke="#dc8064" strokeOpacity="0.4" strokeWidth="1.5" />
-            <circle cx="24" cy="24" r="16" stroke="#dc8064" strokeWidth="2.5" strokeDasharray="4 4" className="spinning-ring" />
-            <path d="M24 10L29.5 24L24 38L18.5 24L24 10Z" fill="#dc8064" className="diamond-pulse" />
-            <circle cx="24" cy="24" r="3" fill="#181714" />
-            <circle cx="24" cy="24" r="1.5" fill="#ffffff" />
+        {/* Simple & Clean Daymark Icon Emblem */}
+        <div className="splash-icon-wrapper">
+          <svg width="72" height="72" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="16" fill="var(--paper)" stroke="var(--line)" strokeWidth="1.5" />
+            <circle cx="32" cy="32" r="20" stroke="var(--accent)" strokeWidth="2" strokeOpacity="0.25" />
+            <circle cx="32" cy="32" r="14" fill="var(--canvas)" stroke="var(--accent)" strokeWidth="2.2" />
+            <path d="M32 23V27M32 37V41M23 32H27M37 32H41" stroke="var(--accent)" strokeWidth="2.2" strokeLinecap="round" />
+            <circle cx="32" cy="32" r="4" fill="var(--accent)" />
           </svg>
         </div>
 
@@ -53,7 +52,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, duration
         </div>
 
         <small className="splash-boot-text">
-          {progress < 40 ? 'Initializing IndexedDB Database Engine...' : progress < 80 ? 'Loading Workspaces & Task Graphs...' : 'Readying Offline Environment...'}
+          {progress < 40 ? 'Loading workspace...' : progress < 85 ? 'Syncing daily records...' : 'Ready'}
         </small>
       </div>
     </div>
