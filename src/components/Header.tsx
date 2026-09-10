@@ -66,7 +66,7 @@ export function Header({ page, onActionClick, actionLabel, onOpenSearch, onOpenS
         {onOpenSettings && (
           <button
             type="button"
-            className={`header-settings-trigger ${page === 'Settings' ? 'active' : ''}`}
+            className={`quiet-button header-settings-trigger ${page === 'Settings' ? 'active' : ''}`}
             onClick={onOpenSettings}
             title="Open Workspace Settings"
             aria-label="Settings"
