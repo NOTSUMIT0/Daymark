@@ -277,8 +277,11 @@ export function saveStoredNotes(notes: Note[]) {
  * Robust cross-platform file download utility (Desktop, PWA, Mobile WebView)
  */
 export function downloadFile(filename: string, content: string, mimeType: string) {
+  const cleanMime = mimeType || 'text/plain';
+
+  // Attempt 1: Standard Blob URL anchor
   try {
-    const blob = new Blob([content], { type: mimeType });
+    const blob = new Blob([content], { type: cleanMime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -289,20 +292,25 @@ export function downloadFile(filename: string, content: string, mimeType: string
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }, 500);
+    }, 1000);
+    return;
   } catch (e) {
-    console.warn('Blob URL download failed, executing data URI fallback:', e);
-    try {
-      const dataUrl = `data:${mimeType};charset=utf-8,` + encodeURIComponent(content);
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error('All file export methods failed:', err);
-    }
+    console.warn('Blob URL download failed, trying Data URI fallback:', e);
+  }
+
+  // Attempt 2: Data URI anchor download for Android WebViews
+  try {
+    const encoded = encodeURIComponent(content);
+    const dataUrl = `data:${cleanMime};charset=utf-8,${encoded}`;
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = filename;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => document.body.removeChild(a), 500);
+  } catch (err) {
+    console.error('All file export methods failed:', err);
   }
 }
 
@@ -366,7 +374,7 @@ export async function downloadFileWithLocationPicker(
     }
   }
 
-  // 3. Fallback: Blob URL download & Data URI fallback
+  // 3. Fallback: Blob URL & Data URI download
   downloadFile(filename, content, cleanMime);
   return true;
 }

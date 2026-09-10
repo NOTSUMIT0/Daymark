@@ -1761,17 +1761,29 @@ h3 {
 }
 
 .editor-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-  margin-top: auto;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+  border-top: 1px solid var(--line) !important;
+  padding-top: 14px !important;
+  margin-top: auto !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.editor-actions button {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
 }
 
 .autosave-label {
-  font-size: 11px;
-  color: var(--quiet);
+  font-size: 11.5px !important;
+  color: var(--quiet) !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+  word-break: break-word !important;
 }
 
 /* Files Controls Bar */
@@ -6633,6 +6645,21 @@ h3 {
   font-size: 12.5px !important;
   color: var(--quiet) !important;
   line-height: 1.45 !important;
+}
+
+@media (max-width: 600px) {
+  .editor-actions {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .editor-actions button {
+    width: 100% !important;
+    height: 42px !important;
+  }
+  .autosave-label {
+    text-align: center !important;
+  }
 }
 
 
