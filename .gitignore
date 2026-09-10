@@ -1,6 +1,8 @@
 node_modules/
 dist/
 src-tauri/target/
+src-tauri/gen/
+*.tsbuildinfo
 *.exe
 *.msi
 *.apk
@@ -11,3 +13,4 @@ src-tauri/target/
 *.log
 .DS_Store
 Thumbs.db
+
