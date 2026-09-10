@@ -1,5 +1,7 @@
 import { useRef } from 'react';
 import { getSecurityAuditLogs } from '../utils/security';
+import { requestNotificationPermission, sendNativeNotification } from '../utils/notificationService';
+
 
 interface SettingsPageProps {
   isDark: boolean;
@@ -146,8 +148,44 @@ export function SettingsPage({
           </div>
         </section>
 
+        {/* Background Notifications & Task Alerts */}
+        <section className="panel settings-panel">
+          <p className="eyebrow">SYSTEM NOTIFICATIONS & REMINDERS</p>
+          <h2>Desktop & Mobile Background Alerts</h2>
+          <p className="panel-desc">
+            Daymark monitors your upcoming task due dates in the background with negligible RAM usage (~3MB), notifying you 1 day in advance and alerting you when focus sprints are ending.
+          </p>
+
+          <div className="setting-control-row">
+            <div className="setting-info-text">
+              <strong>Proactive Due Date Reminders (1 Day In Advance)</strong>
+              <small className="setting-subtext">
+                Notifies your Windows OS or Android mobile device on the 10th when a task is due on the 11th.
+              </small>
+            </div>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={async () => {
+                const granted = await requestNotificationPermission();
+                if (granted) {
+                  sendNativeNotification(
+                    'Daymark System Notification Test',
+                    'Desktop and Mobile proactive notifications are active! You will be notified 1 day before tasks are due.'
+                  );
+                } else {
+                  alert('Notification permission was denied. Please allow notifications in your browser/OS settings.');
+                }
+              }}
+            >
+              Test Native System Notification
+            </button>
+          </div>
+        </section>
+
         {/* Security Baseline & System Architecture */}
         <section className="panel settings-panel security-panel">
+
           <p className="eyebrow">PRODUCTION SECURITY BASELINE</p>
           <h2>Security & System Architecture</h2>
 

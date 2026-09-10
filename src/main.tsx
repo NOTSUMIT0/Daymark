@@ -23,6 +23,12 @@ import {
 } from './utils/storage';
 import { daymarkDB } from './utils/indexedDB';
 import { computePayloadChecksum, validateBackupSchema } from './utils/security';
+import {
+  checkAndNotifyDueTasks,
+  notifyFocusSprintWarning,
+  requestNotificationPermission
+} from './utils/notificationService';
+
 
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -423,19 +429,37 @@ function App() {
     }
   };
 
+  // Background Proactive Task Due Date Notification Check
+  useEffect(() => {
+    requestNotificationPermission();
+    checkAndNotifyDueTasks(tasks);
+
+    const interval = setInterval(() => {
+      checkAndNotifyDueTasks(tasks);
+    }, 60000); // Check every 60s in background
+
+    return () => clearInterval(interval);
+  }, [tasks]);
+
   // Global Focus Timer Countdown Effect
   useEffect(() => {
     let interval: any = null;
     if (isTimerActive && timerSeconds > 0) {
       interval = setInterval(() => {
-        setTimerSeconds((prev) => prev - 1);
+        setTimerSeconds((prev) => {
+          if (prev === 61) { // 60 seconds remaining warning!
+            notifyFocusSprintWarning(mainFocus);
+          }
+          return prev - 1;
+        });
       }, 1000);
     } else if (timerSeconds === 0 && isTimerActive) {
       setIsTimerActive(false);
       playFocusCompletionChime();
     }
     return () => clearInterval(interval);
-  }, [isTimerActive, timerSeconds]);
+  }, [isTimerActive, timerSeconds, mainFocus]);
+
 
   const formatTimer = (sec: number) => {
     const mins = Math.floor(sec / 60);
