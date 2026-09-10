@@ -274,6 +274,39 @@ export function saveStoredNotes(notes: Note[]) {
 }
 
 /**
+ * Robust cross-platform file download utility (Desktop, PWA, Mobile WebView)
+ */
+export function downloadFile(filename: string, content: string, mimeType: string) {
+  try {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 500);
+  } catch (e) {
+    console.warn('Blob URL download failed, executing data URI fallback:', e);
+    try {
+      const dataUrl = `data:${mimeType};charset=utf-8,` + encodeURIComponent(content);
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('All file export methods failed:', err);
+    }
+  }
+}
+
+/**
  * Export tasks as a downloadable CSV spreadsheet
  */
 export function exportTasksToCSV(tasks: Task[]) {
@@ -289,13 +322,7 @@ export function exportTasksToCSV(tasks: Task[]) {
   ]);
 
   const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Daymark_Tasks_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadFile(`Daymark_Tasks_${new Date().toISOString().split('T')[0]}.csv`, csvContent, 'text/csv;charset=utf-8;');
 }
 
 /**
@@ -309,12 +336,6 @@ export function exportNotesToText(notes: Note[]) {
     )
     .join('\n');
 
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Daymark_Notes_${new Date().toISOString().split('T')[0]}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadFile(`Daymark_Notes_${new Date().toISOString().split('T')[0]}.txt`, content, 'text/plain;charset=utf-8;');
 }
 

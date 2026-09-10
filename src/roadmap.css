@@ -235,6 +235,7 @@
   flex-direction: column;
   justify-content: space-between;
   cursor: move;
+  touch-action: none;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
   border-top-width: 4px;
 }

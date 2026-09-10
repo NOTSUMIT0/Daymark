@@ -21,7 +21,8 @@ import {
   getStoredFiles,
   saveStoredFiles,
   exportTasksToCSV,
-  exportNotesToText
+  exportNotesToText,
+  downloadFile
 } from './utils/storage';
 
 import { daymarkDB } from './utils/indexedDB';
@@ -354,13 +355,8 @@ function App() {
     const checksum = await computePayloadChecksum(payload);
     const fullBackup = { ...payload, checksum };
 
-    const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Daymark_Backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const jsonStr = JSON.stringify(fullBackup, null, 2);
+    downloadFile(`Daymark_Backup_${new Date().toISOString().split('T')[0]}.json`, jsonStr, 'application/json');
   };
 
   const handleResetData = () => {

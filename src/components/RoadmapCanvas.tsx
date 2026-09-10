@@ -187,13 +187,77 @@ export function RoadmapCanvas({
     }
   };
 
-  // Node Drag Start on MouseDown
+  // Touchscreen Support for Mobile & Tablets
+  const handleTouchStartCanvas = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const isBg =
+      e.target === e.currentTarget ||
+      (e.target as HTMLElement).classList.contains('canvas-background') ||
+      (e.target as HTMLElement).classList.contains('edges-layer');
+
+    if (!isBg) return;
+
+    if (connectSource) {
+      setConnectSource(null);
+      setDragConnectionPos(null);
+    }
+
+    setIsPanning(true);
+    setPanStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    setSelectedEdge(null);
+  };
+
+  const handleTouchMoveCanvas = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+
+    if (isPanning) {
+      setPan({
+        x: touch.clientX - panStart.x,
+        y: touch.clientY - panStart.y
+      });
+      return;
+    }
+
+    if (draggedNodeId) {
+      const coords = getCanvasCoords(touch.clientX, touch.clientY);
+      const newX = Math.round(coords.x - dragOffset.x);
+      const newY = Math.round(coords.y - dragOffset.y);
+
+      onUpdateMap({
+        nodes: map.nodes.map((n) =>
+          n.id === draggedNodeId ? { ...n, x: newX, y: newY } : n
+        )
+      });
+    } else if (connectSource) {
+      const coords = getCanvasCoords(touch.clientX, touch.clientY);
+      setDragConnectionPos(coords);
+    }
+  };
+
+  // Node Drag Start on MouseDown (Desktop)
   const handleNodeMouseDown = (e: React.MouseEvent<HTMLElement>, node: RoadmapNode) => {
-    if (connectSource) return; // Don't initiate node drag while extending connection line
+    if (connectSource) return;
 
     e.stopPropagation();
     setSelectedEdge(null);
     const coords = getCanvasCoords(e.clientX, e.clientY);
+    setDraggedNodeId(node.id);
+    setDragOffset({
+      x: coords.x - node.x,
+      y: coords.y - node.y
+    });
+  };
+
+  const handleTouchStartNode = (e: React.TouchEvent<HTMLElement>, node: RoadmapNode) => {
+    if (e.touches.length !== 1) return;
+    if (connectSource) return;
+
+    e.stopPropagation();
+    setSelectedEdge(null);
+    const touch = e.touches[0];
+    const coords = getCanvasCoords(touch.clientX, touch.clientY);
     setDraggedNodeId(node.id);
     setDragOffset({
       x: coords.x - node.x,
@@ -462,6 +526,9 @@ export function RoadmapCanvas({
           onMouseMove={handleCanvasMouseMove}
           onMouseUp={handleCanvasMouseUp}
           onMouseLeave={handleCanvasMouseUp}
+          onTouchStart={handleTouchStartCanvas}
+          onTouchMove={handleTouchMoveCanvas}
+          onTouchEnd={handleCanvasMouseUp}
           onWheel={handleWheel}
         >
           <div
@@ -584,6 +651,7 @@ export function RoadmapCanvas({
                   }}
                   onClick={(e) => handleNodeClick(e, node)}
                   onMouseDown={(e) => handleNodeMouseDown(e, node)}
+                  onTouchStart={(e) => handleTouchStartNode(e, node)}
                 >
                   {/* Left Connection Port (Single Click to Start or Finish Line) */}
                   <div

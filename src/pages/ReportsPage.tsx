@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Task, RoadmapMap, Note, FileItem } from '../types';
+import { downloadFile } from '../utils/storage';
 
 interface ReportsPageProps {
   tasks: Task[];
@@ -272,17 +273,19 @@ ${recommendations.map((r) => `   * [${r.title}] ${r.desc}`).join('\n')}
 ================================================================================
     `.trim();
 
-    const blob = new Blob([summaryText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Daymark_${horizon.toUpperCase()}_Report_${new Date().toISOString().split('T')[0]}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(
+      `Daymark_${horizon.toUpperCase()}_Report_${new Date().toISOString().split('T')[0]}.txt`,
+      summaryText,
+      'text/plain;charset=utf-8;'
+    );
   };
 
   const handlePrintPdf = () => {
-    window.print();
+    try {
+      window.print();
+    } catch (err) {
+      console.warn('PDF Print triggers unavailable in this view:', err);
+    }
   };
 
   return (
