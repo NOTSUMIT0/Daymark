@@ -19,8 +19,11 @@ import {
   getStoredNotes,
   saveStoredNotes,
   getStoredFiles,
-  saveStoredFiles
+  saveStoredFiles,
+  exportTasksToCSV,
+  exportNotesToText
 } from './utils/storage';
+
 import { daymarkDB } from './utils/indexedDB';
 import { computePayloadChecksum, validateBackupSchema } from './utils/security';
 import {
@@ -737,6 +740,8 @@ function App() {
             onExportData={handleExportBackup}
             onImportData={handleImportBackup}
             onResetData={handleResetData}
+            onExportCSV={() => exportTasksToCSV(tasks)}
+            onExportText={() => exportNotesToText(notes)}
             tasksCount={tasks.length}
             roadmapsCount={roadmaps.length}
             notesCount={notes.length}

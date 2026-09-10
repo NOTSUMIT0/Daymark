@@ -12,6 +12,8 @@ interface SettingsPageProps {
   onExportData: () => void;
   onImportData: (file: File) => void;
   onResetData: () => void;
+  onExportCSV?: () => void;
+  onExportText?: () => void;
   tasksCount: number;
   roadmapsCount: number;
   notesCount: number;
@@ -27,11 +29,14 @@ export function SettingsPage({
   onExportData,
   onImportData,
   onResetData,
+  onExportCSV,
+  onExportText,
   tasksCount,
   roadmapsCount,
   notesCount,
   filesCount
 }: SettingsPageProps) {
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +140,16 @@ export function SettingsPage({
             <button type="button" className="primary-button" onClick={onExportData}>
               Export JSON Backup
             </button>
+            {onExportCSV && (
+              <button type="button" className="quiet-button" onClick={onExportCSV}>
+                Export CSV Spreadsheet
+              </button>
+            )}
+            {onExportText && (
+              <button type="button" className="quiet-button" onClick={onExportText}>
+                Export Notes Text
+              </button>
+            )}
             <button
               type="button"
               className="quiet-button"
@@ -142,6 +157,7 @@ export function SettingsPage({
             >
               Import JSON Backup
             </button>
+
             <button type="button" className="quiet-button danger-sm" onClick={onResetData}>
               Purge Local Storage
             </button>

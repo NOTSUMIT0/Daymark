@@ -272,3 +272,49 @@ export function saveStoredNotes(notes: Note[]) {
   localStorage.setItem('daymark.notes', JSON.stringify(notes));
   daymarkDB.setAll('notes', notes).catch((err) => console.warn('IndexedDB note sync warning:', err));
 }
+
+/**
+ * Export tasks as a downloadable CSV spreadsheet
+ */
+export function exportTasksToCSV(tasks: Task[]) {
+  const headers = ['ID', 'Title', 'Priority', 'Status', 'Category', 'Due Date', 'Created At'];
+  const rows = tasks.map((t) => [
+    `"${t.id}"`,
+    `"${t.title.replace(/"/g, '""')}"`,
+    `"${t.priority}"`,
+    `"${t.status}"`,
+    `"${(t.category || '').replace(/"/g, '""')}"`,
+    `"${t.dueDate || ''}"`,
+    `"${t.createdAt}"`
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Daymark_Tasks_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Export notes as a formatted text summary file
+ */
+export function exportNotesToText(notes: Note[]) {
+  const content = notes
+    .map(
+      (n) =>
+        `==================================================\nTITLE: ${n.title}\nUPDATED: ${n.updatedAt}\n==================================================\n${n.content}\n\n`
+    )
+    .join('\n');
+
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Daymark_Notes_${new Date().toISOString().split('T')[0]}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
