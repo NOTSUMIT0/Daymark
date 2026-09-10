@@ -38,6 +38,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { CommandPaletteModal } from './components/CommandPaletteModal';
 import { SplashScreen } from './components/SplashScreen';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -906,5 +907,10 @@ function App() {
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  createRoot(rootElement).render(<App />);
+  createRoot(rootElement).render(
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
 }
+
