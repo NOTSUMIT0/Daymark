@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import { FileItem } from '../types';
 import { CustomSelect } from '../components/CustomSelect';
 import { DialogOptions } from '../components/AppDialogModal';
+import { downloadFileWithLocationPicker } from '../utils/storage';
 
 interface FilesPageProps {
   files: FileItem[];
@@ -83,7 +84,6 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShow
     }
   };
 
-
   // Format File Size Helper
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -141,29 +141,11 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShow
     setShowUploadModal(false);
   };
 
-  // Trigger File Download
+  // Trigger Native Mobile File Download / Location Picker
   const downloadFileItem = (item: FileItem) => {
-    if (item.dataUrl || item.annotations) {
-      const link = document.createElement('a');
-      link.href = item.annotations || item.dataUrl || '';
-      link.download = item.name;
-      link.click();
-    } else if (item.textContent) {
-      const blob = new Blob([item.textContent], { type: item.type || 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = item.name;
-    } else if (item.textContent) {
-      const blob = new Blob([item.textContent], { type: 'text/plain;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${item.name}.txt`;
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-
+    const payload = item.dataUrl || item.textContent || '';
+    const mime = item.type || (item.name.endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream');
+    downloadFileWithLocationPicker(item.name, payload, mime);
   };
 
   // Update File Category
@@ -368,17 +350,15 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShow
                     <span className="file-badge" style={{ backgroundColor: badge.color }}>
                       {badge.label}
                     </span>
-                    <select
-                      className="card-category-select"
+                    <span className="file-badge" style={{ backgroundColor: badge.color }}>
+                      {badge.label}
+                    </span>
+                    <CustomSelect
                       value={f.category}
-                      onChange={(e) => handleFileCategoryChange(f, e.target.value)}
-                    >
-                      {categories.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
+                      options={categories}
+                      onChange={(val) => handleFileCategoryChange(f, val)}
+                      className="card-category-custom-select"
+                    />
                   </div>
 
                   <div className="file-card-body" onClick={() => setViewerFile(f)}>
@@ -403,7 +383,7 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShow
                       type="button"
                       className="quiet-button sm-btn"
                       onClick={() => setViewerFile(f)}
-                      title="Open & Annotate Document in Full Screen Studio"
+                      title="Open & View Document"
                     >
                       Open / View
                     </button>
@@ -432,52 +412,43 @@ export function FilesPage({ files, onAddFile, onUpdateFile, onDeleteFile, onShow
           /* List View */
           <div className="files-list-table">
             <div className="list-header">
-              <span>Name</span>
-              <span>Category</span>
-              <span>Size</span>
-              <span>Date</span>
-              <span>Actions</span>
+              <span className="col-header-name">NAME</span>
+              <span className="col-header-cat">CATEGORY</span>
+              <span className="col-header-size">SIZE</span>
+              <span className="col-header-date">DATE</span>
+              <span className="col-header-act">ACTIONS</span>
             </div>
             {sortedFiles.map((f) => {
               const badge = getFileBadgeIcon(f.extension, f.type);
-              const isPdf = f.name.toLowerCase().endsWith('.pdf');
-              const isImg = f.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
-              const isTxt = f.name.match(/\.(txt|md|csv|json|js|ts|html|css|xml)$/i);
-              const canView = isPdf || isImg || isTxt;
-
               return (
                 <div key={f.id} className="list-row">
                   <div className="list-name-col" onClick={() => setViewerFile(f)}>
                     <span className="file-badge-sm" style={{ backgroundColor: badge.color }}>
                       {badge.label}
                     </span>
-                    <strong className="list-file-name">{f.name}</strong>
+                    <div className="list-file-info">
+                      <strong className="list-file-name" title={f.name}>{f.name}</strong>
+                      <span className="list-file-sub">{f.size} · {f.uploadedAt}</span>
+                    </div>
                   </div>
                   <div className="list-category-col">
-                    <select
+                    <CustomSelect
                       value={f.category}
-                      onChange={(e) => handleFileCategoryChange(f, e.target.value)}
-                      className="list-category-select"
-                    >
-                      {categories.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
+                      options={categories}
+                      onChange={(val) => handleFileCategoryChange(f, val)}
+                      className="list-category-custom-select"
+                    />
                   </div>
                   <div className="list-size-col">{f.size}</div>
                   <div className="list-date-col">{f.uploadedAt}</div>
                   <div className="list-actions-col">
-                    {canView && (
-                      <button
-                        type="button"
-                        className="quiet-button sm-btn"
-                        onClick={() => setViewerFile(f)}
-                      >
-                        View
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      className="quiet-button sm-btn"
+                      onClick={() => setViewerFile(f)}
+                    >
+                      Open / View
+                    </button>
                     <button
                       type="button"
                       className="quiet-button sm-btn"
@@ -888,6 +859,31 @@ function DocxViewer({ file, onDownload }: { file: FileItem; onDownload: () => vo
     return pages;
   }, [paragraphs, isSlideDeck]);
 
+  // Interactive PPTX slide index state
+  const [activeSlideIdx, setActiveSlideIdx] = useState(0);
+
+  // Parse PPTX blocks into structured slide cards
+  const parsedSlides = useMemo(() => {
+    if (!extractedText || !isSlideDeck) return [];
+    return extractedText.split('\n\n').map((block, idx) => {
+      const lines = block.split('\n');
+      const headerLine = lines[0] || `SLIDE ${idx + 1}`;
+      const bodyText = lines.slice(1).join(' ');
+      // Try to split body into title & bullet points
+      const sentences = bodyText.split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 0);
+      const slideTitle = sentences[0] || `Slide Title ${idx + 1}`;
+      const slidePoints = sentences.length > 1 ? sentences.slice(1) : [bodyText];
+
+      return {
+        id: idx,
+        slideNumLabel: headerLine,
+        title: slideTitle,
+        points: slidePoints,
+        rawBody: bodyText
+      };
+    });
+  }, [extractedText, isSlideDeck]);
+
   if (loading) {
     return (
       <div className="sheet-status-box">
@@ -898,42 +894,75 @@ function DocxViewer({ file, onDownload }: { file: FileItem; onDownload: () => vo
 
   return (
     <div className="docx-viewer-container">
-      {/* Document Header Banner */}
-      <div className="docx-header-banner">
-        <div className="docx-info-group">
-          <span className="docx-type-badge">{extUpper} DOCUMENT</span>
-          <h3>{file.name}</h3>
-          <span className="docx-meta">
-            Size: <strong>{file.size}</strong> · Words: <strong>{wordCount}</strong> · Characters: <strong>{charCount}</strong>
-          </span>
-        </div>
-        <button type="button" className="primary-button sm-btn" onClick={onDownload}>
-          Download Document
-        </button>
-      </div>
-
-      {/* Main Viewport containing paper sheets / slide cards */}
+      {/* Main Viewport containing paper sheets / slide deck studio */}
       <div className="docx-content-viewport">
         {extractedText ? (
-          isSlideDeck ? (
-            /* PowerPoint Presentation Slides View */
-            <div className="pptx-slides-wrapper">
-              {extractedText.split('\n\n').map((block, idx) => {
-                const lines = block.split('\n');
-                const slideNumText = lines[0] || `SLIDE ${idx + 1}`;
-                const slideBody = lines.slice(1).join(' ');
-                return (
-                  <div key={idx} className="pptx-slide-card">
-                    <div className="slide-card-header">
-                      <span className="slide-num-badge">{slideNumText}</span>
-                      <span className="slide-deck-meta">Presentation Slide</span>
-                    </div>
-                    <div className="slide-card-body">
-                      <p>{slideBody}</p>
-                    </div>
+          isSlideDeck && parsedSlides.length > 0 ? (
+            /* Widescreen PowerPoint Slide Deck Studio */
+            <div className="pptx-studio-container">
+              {/* Slide Navigation Controller */}
+              <div className="pptx-nav-controller">
+                <button
+                  type="button"
+                  className="quiet-button sm-btn"
+                  disabled={activeSlideIdx === 0}
+                  onClick={() => setActiveSlideIdx((prev) => Math.max(0, prev - 1))}
+                >
+                  ◄ Previous Slide
+                </button>
+
+                <div className="pptx-counter-badge">
+                  <span>Slide <strong>{activeSlideIdx + 1}</strong> of <strong>{parsedSlides.length}</strong></span>
+                </div>
+
+                <button
+                  type="button"
+                  className="quiet-button sm-btn"
+                  disabled={activeSlideIdx === parsedSlides.length - 1}
+                  onClick={() => setActiveSlideIdx((prev) => Math.min(parsedSlides.length - 1, prev + 1))}
+                >
+                  Next Slide ►
+                </button>
+              </div>
+
+              {/* 16:9 Presentation Canvas Frame */}
+              <div className="pptx-widescreen-frame">
+                <div className="pptx-slide-canvas">
+                  <div className="pptx-canvas-header">
+                    <span className="pptx-slide-badge">{parsedSlides[activeSlideIdx].slideNumLabel}</span>
+                    <span className="pptx-deck-title">{file.name}</span>
                   </div>
-                );
-              })}
+
+                  <div className="pptx-canvas-body">
+                    <h2 className="pptx-slide-title">{parsedSlides[activeSlideIdx].title}</h2>
+                    <ul className="pptx-bullet-list">
+                      {parsedSlides[activeSlideIdx].points.map((pt, pIdx) => (
+                        <li key={pIdx}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pptx-canvas-footer">
+                    <span>Daymark Presentation Studio</span>
+                    <span>{activeSlideIdx + 1} / {parsedSlides.length}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide Thumbnails Selector Row */}
+              <div className="pptx-thumbnails-bar">
+                {parsedSlides.map((s, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className={`pptx-thumb-card ${idx === activeSlideIdx ? 'active' : ''}`}
+                    onClick={() => setActiveSlideIdx(idx)}
+                  >
+                    <span className="thumb-num">SLIDE {idx + 1}</span>
+                    <span className="thumb-title">{s.title.substring(0, 30)}...</span>
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             /* Microsoft Word Document Multi-Page Sheet View */
@@ -961,10 +990,10 @@ function DocxViewer({ file, onDownload }: { file: FileItem; onDownload: () => vo
           <div className="docx-fallback-card">
             <h4>Microsoft Office Document ({extUpper})</h4>
             <p>
-              This file ({file.name}) is ready for download and viewing in Microsoft Word or PowerPoint.
+              This file ({file.name}) is ready for viewing and download.
             </p>
             <button type="button" className="primary-button" onClick={onDownload}>
-              Download {file.name} ({file.size})
+              📥 Download {file.name} ({file.size})
             </button>
           </div>
         )}
@@ -1019,7 +1048,7 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
       ) ||
       (file.type || '').startsWith('text/'));
 
-  // Convert Base64 PDF DataURL to Blob URL so Chrome renders PDF pages reliably
+  // Convert Base64 PDF DataURL to Blob URL so WebView renders PDF pages reliably
   const pdfBlobUrl = useMemo(() => {
     if (!file.dataUrl || !isPdf) return null;
     if (file.dataUrl.startsWith('blob:')) return file.dataUrl;
@@ -1059,19 +1088,34 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
         <div className="studio-header">
           <div className="studio-title-group">
             <span className="eyebrow">DOCUMENT WORKSPACE STUDIO</span>
-            <h2>{file.name}</h2>
-            <span className="file-studio-meta">
-              {file.size} · Category: <strong>{file.category}</strong> · Uploaded: {file.uploadedAt}
-            </span>
+            <h2 className="studio-filename" title={file.name}>{file.name}</h2>
+            <div className="studio-meta-pills">
+              <span className="meta-pill">{file.size}</span>
+              <span className="meta-pill">Category: <strong>{file.category}</strong></span>
+              <span className="meta-pill">Uploaded: {file.uploadedAt}</span>
+            </div>
           </div>
 
-          <div className="studio-header-actions">
-            <button type="button" className="quiet-button sm-btn" onClick={onDownload}>
-              Download File
+          <button
+            type="button"
+            className="close-btn studio-close-btn"
+            onClick={onClose}
+            aria-label="Close File Viewer"
+            title="Close File Viewer"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Studio Sub-Header Action Toolbar */}
+        <div className="studio-sub-toolbar">
+          <div className="studio-tool-left">
+            <button type="button" className="primary-button sm-btn" onClick={onDownload}>
+              📥 Download File
             </button>
-            <button type="button" className="close" onClick={onClose} title="Close File Viewer">
-              ×
-            </button>
+          </div>
+          <div className="studio-tool-right">
+            <span className="format-badge-label">{file.extension?.toUpperCase() || 'FILE'}</span>
           </div>
         </div>
 
@@ -1084,6 +1128,14 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
                 className="pdf-document-frame"
                 title={file.name}
               />
+              {!pdfBlobUrl && !file.dataUrl && (
+                <div className="pdf-fallback-box">
+                  <p>PDF Document ({file.name}) is ready for download.</p>
+                  <button type="button" className="primary-button" onClick={onDownload}>
+                    📥 Download PDF
+                  </button>
+                </div>
+              )}
             </div>
           ) : isSpreadsheet ? (
             <SpreadsheetViewer file={file} />
@@ -1110,7 +1162,6 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
                 >
                   Copy Text
                 </button>
-
               </div>
               <pre className="code-text-display">
                 <code>{file.textContent || 'No text content available.'}</code>
@@ -1122,7 +1173,7 @@ function DocumentStudioModal({ file, onClose, onDownload }: DocumentStudioModalP
               <h3>{file.name}</h3>
               <p>Type: {file.type || 'Binary Package'} · Size: {file.size}</p>
               <button type="button" className="primary-button" onClick={onDownload}>
-                Download {file.name} ({file.size})
+                📥 Download {file.name} ({file.size})
               </button>
             </div>
           )}

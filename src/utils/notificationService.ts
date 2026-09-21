@@ -121,7 +121,96 @@ export async function sendNativeNotification(title: string, body: string, tag?: 
 }
 
 /**
- * Proactively check tasks due in 1 day (e.g. due on 11th when today is 10th)
+ * Helper to determine current daily time slot for multi-frequency notifications
+ */
+function getCurrentTimeSlot(): string {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  if (hour >= 17 && hour < 22) return 'evening';
+  return 'night';
+}
+
+/**
+ * Schedule Native Capacitor Local Notifications for Android Native OS Alarm Manager
+ * (Sends 2-3 reminders a day at 9:00 AM, 1:30 PM, and 6:30 PM for tasks due today/tomorrow)
+ */
+export async function scheduleCapacitorNativeReminders(tasks: Task[]) {
+  try {
+    if (typeof window === 'undefined' || !(window as any).Capacitor?.isNativePlatform?.()) return;
+
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const pendingTasks = tasks.filter((t) => t.status !== 'complete' && t.dueDate);
+    if (pendingTasks.length === 0) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    const notificationsToSchedule: any[] = [];
+    let notifId = 1000;
+
+    pendingTasks.forEach((task) => {
+      const isDueToday = task.dueDate === todayStr;
+      const isDueTomorrow = task.dueDate === tomorrowStr;
+      const isOverdue = task.dueDate < todayStr;
+
+      if (!isDueToday && !isDueTomorrow && !isOverdue) return;
+
+      let title = `Task Reminder — Daymark`;
+      let timeLabel = `scheduled for ${task.dueDate}`;
+      if (isDueToday) {
+        title = `Due Today: "${task.title}"`;
+        timeLabel = `due today`;
+      } else if (isDueTomorrow) {
+        title = `Due Tomorrow: "${task.title}"`;
+        timeLabel = `due tomorrow (${task.dueDate})`;
+      } else if (isOverdue) {
+        title = `Overdue Action Required: "${task.title}"`;
+        timeLabel = `was due on ${task.dueDate}`;
+      }
+
+      // Times for 3 daily reminder slots: 9:00 AM, 1:30 PM (13:30), 6:30 PM (18:30)
+      const slotTimes = [
+        { h: 9, m: 0 },
+        { h: 13, m: 30 },
+        { h: 18, m: 30 }
+      ];
+
+      slotTimes.forEach(({ h, m }) => {
+        const schedTime = new Date();
+        schedTime.setHours(h, m, 0, 0);
+
+        // If today's slot time has already passed, set for tomorrow if task is still due
+        if (schedTime.getTime() > Date.now()) {
+          notifId++;
+          notificationsToSchedule.push({
+            id: notifId,
+            title,
+            body: `"${task.title}" is ${timeLabel}. Priority: ${task.priority.toUpperCase()}. Please review and mark complete.`,
+            schedule: { at: schedTime },
+            smallIcon: 'ic_stat_icon_config_sample',
+            iconColor: '#DC8064'
+          });
+        }
+      });
+    });
+
+    if (notificationsToSchedule.length > 0) {
+      await LocalNotifications.schedule({ notifications: notificationsToSchedule });
+      logSecurityEvent('Capacitor LocalNotifications Scheduled', `Scheduled ${notificationsToSchedule.length} native reminders`, 'info');
+    }
+  } catch (err) {
+    console.warn('Capacitor native scheduling warning:', err);
+  }
+}
+
+/**
+ * Proactively check tasks and send accurate due notifications (2-3 times a day until marked complete)
  */
 export function checkAndNotifyDueTasks(tasks: Task[]) {
   const settings = getNotificationSettings();
@@ -133,44 +222,62 @@ export function checkAndNotifyDueTasks(tasks: Task[]) {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    const targetDate = new Date(today);
-    targetDate.setDate(targetDate.getDate() + settings.advanceDays); // Advance by 1 day
-    const targetDateStr = targetDate.toISOString().split('T')[0];
     const todayStr = today.toISOString().split('T')[0];
 
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    const currentSlot = getCurrentTimeSlot();
+
     tasks.forEach((task) => {
+      // 1. If task is already complete, stop notifying
       if (task.status === 'complete') return;
 
-      const isDueTomorrow = task.dueDate === targetDateStr;
       const isDueToday = task.dueDate === todayStr;
+      const isDueTomorrow = task.dueDate === tomorrowStr;
+      const isOverdue = task.dueDate && task.dueDate < todayStr;
       const isHighPri = (task.priority || '').toLowerCase() === 'high';
 
-      const dueKey = `due_${task.id}_${task.dueDate}`;
-      const highPriKey = `highpri_${task.id}_${todayStr}`;
+      // Slot key ensures up to 3 notifications per day (morning, afternoon, evening)
+      const slotKey = `notif_${task.id}_${todayStr}_${currentSlot}`;
+      const highPriSlotKey = `highpri_${task.id}_${todayStr}_${currentSlot}`;
 
-      if ((isDueTomorrow || isDueToday) && !notifiedMap[dueKey]) {
-        const title = isDueTomorrow
-          ? `Task Due Tomorrow — Daymark`
-          : `Task Due Today — Daymark`;
-        const body = `"${task.title}" is scheduled for ${task.dueDate}. Priority: ${task.priority.toUpperCase()}`;
+      if ((isDueToday || isDueTomorrow || isOverdue) && !notifiedMap[slotKey]) {
+        let title = '';
+        let body = '';
+
+        if (isDueToday) {
+          title = `Due Today: "${task.title}"`;
+          body = `Reminder: "${task.title}" is due today (${task.dueDate})! Priority: ${task.priority.toUpperCase()}. Status: ${task.status.toUpperCase()}.`;
+        } else if (isDueTomorrow) {
+          title = `Due Tomorrow: "${task.title}"`;
+          body = `Upcoming Task: "${task.title}" is scheduled for tomorrow (${task.dueDate}). Priority: ${task.priority.toUpperCase()}.`;
+        } else if (isOverdue) {
+          title = `Overdue Task Action Required: "${task.title}"`;
+          body = `Pending Action: "${task.title}" was due on ${task.dueDate} and is still incomplete. Priority: ${task.priority.toUpperCase()}.`;
+        }
 
         sendNativeNotification(title, body, `task_${task.id}`);
-        notifiedMap[dueKey] = new Date().toISOString();
-        logSecurityEvent('Due Date Notification Fired', `Task: ${task.title} (Due: ${task.dueDate})`, 'info');
+        notifiedMap[slotKey] = new Date().toISOString();
+        logSecurityEvent('Due Date Notification Fired', `Task: ${task.title} (Slot: ${currentSlot}, Due: ${task.dueDate})`, 'info');
       }
 
-      if (isHighPri && !notifiedMap[highPriKey]) {
-        const title = `High Priority Task Pending — Daymark`;
-        const body = `"${task.title}" is flagged HIGH priority and pending execution.`;
+      // Additional high-priority reminder if flagged high priority and not yet complete
+      if (isHighPri && (isDueToday || isOverdue) && !notifiedMap[highPriSlotKey]) {
+        const title = `[High Priority] Action Pending: "${task.title}"`;
+        const body = `Urgent: "${task.title}" is marked HIGH priority and requires immediate attention.`;
 
         sendNativeNotification(title, body, `highpri_${task.id}`);
-        notifiedMap[highPriKey] = new Date().toISOString();
+        notifiedMap[highPriSlotKey] = new Date().toISOString();
         logSecurityEvent('High Priority Notification Fired', `Task: ${task.title}`, 'info');
       }
     });
 
     localStorage.setItem(NOTIFIED_TASKS_KEY, JSON.stringify(notifiedMap));
+
+    // Also sync native Capacitor background reminders if on mobile
+    scheduleCapacitorNativeReminders(tasks);
   } catch (err) {
     console.warn('Error evaluating task due notifications:', err);
   }

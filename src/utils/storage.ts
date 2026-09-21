@@ -222,7 +222,22 @@ export function getStoredFiles(): FileItem[] {
 }
 
 export function saveStoredFiles(files: FileItem[]) {
-  localStorage.setItem('daymark.files', JSON.stringify(files));
+  try {
+    // Strip heavy base64 binary streams from localStorage to prevent QuotaExceededError (50MB - 100MB PDF safety)
+    const lightweightFiles = files.map((f) => {
+      if (f.dataUrl && f.dataUrl.length > 50000) {
+        // Retain metadata, strip heavy base64 string from localStorage (IndexedDB retains full data)
+        const { dataUrl, ...meta } = f;
+        return meta as FileItem;
+      }
+      return f;
+    });
+    localStorage.setItem('daymark.files', JSON.stringify(lightweightFiles));
+  } catch (err) {
+    console.warn('localStorage quota reached — safely storing in IndexedDB:', err);
+  }
+
+  // Full heavy files (including 50MB - 100MB+ PDFs) stored directly in mobile device disk via IndexedDB
   daymarkDB.setAll('files', files).catch((err) => console.warn('IndexedDB file sync warning:', err));
 }
 
@@ -239,7 +254,11 @@ export function getStoredRoadmaps(): RoadmapMap[] {
 }
 
 export function saveStoredRoadmaps(roadmaps: RoadmapMap[]) {
-  localStorage.setItem('daymark.roadmaps', JSON.stringify(roadmaps));
+  try {
+    localStorage.setItem('daymark.roadmaps', JSON.stringify(roadmaps));
+  } catch (err) {
+    console.warn('localStorage quota warning for roadmaps:', err);
+  }
   daymarkDB.setAll('roadmaps', roadmaps).catch((err) => console.warn('IndexedDB roadmap sync warning:', err));
 }
 
@@ -254,7 +273,11 @@ export function getStoredTasks(): Task[] {
 }
 
 export function saveStoredTasks(tasks: Task[]) {
-  localStorage.setItem('daymark.tasks', JSON.stringify(tasks));
+  try {
+    localStorage.setItem('daymark.tasks', JSON.stringify(tasks));
+  } catch (err) {
+    console.warn('localStorage quota warning for tasks:', err);
+  }
   daymarkDB.setAll('tasks', tasks).catch((err) => console.warn('IndexedDB task sync warning:', err));
 }
 
@@ -269,7 +292,11 @@ export function getStoredNotes(): Note[] {
 }
 
 export function saveStoredNotes(notes: Note[]) {
-  localStorage.setItem('daymark.notes', JSON.stringify(notes));
+  try {
+    localStorage.setItem('daymark.notes', JSON.stringify(notes));
+  } catch (err) {
+    console.warn('localStorage quota warning for notes:', err);
+  }
   daymarkDB.setAll('notes', notes).catch((err) => console.warn('IndexedDB note sync warning:', err));
 }
 
@@ -320,63 +347,97 @@ export function downloadFile(filename: string, content: string, mimeType: string
  */
 export async function downloadFileWithLocationPicker(
   filename: string,
-  content: string,
+  contentOrDataUrl: string,
   mimeType: string
 ): Promise<boolean> {
-  const cleanMime = mimeType || 'text/plain';
+  const cleanMime = mimeType || 'application/octet-stream';
+  let blob: Blob;
 
-  // 1. Mobile Native File Save / Share Sheet (Android & iOS Native WebViews & Mobile Browsers)
+  try {
+    if (contentOrDataUrl && contentOrDataUrl.startsWith('data:')) {
+      const parts = contentOrDataUrl.split(';base64,');
+      const realMime = parts[0].replace('data:', '') || cleanMime;
+      const bstr = atob(parts[1] || '');
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      blob = new Blob([u8arr], { type: realMime });
+    } else {
+      blob = new Blob([contentOrDataUrl || ''], { type: cleanMime });
+    }
+  } catch (err) {
+    console.warn('Blob conversion warning, fallback to text:', err);
+    blob = new Blob([contentOrDataUrl || ''], { type: cleanMime });
+  }
+
+  // 1. Mobile Native File Save / Share Sheet (Android & iOS Native Mobile File Explorer)
   if (typeof navigator !== 'undefined' && navigator.share && typeof File !== 'undefined') {
     try {
-      const file = new File([content], filename, { type: cleanMime });
+      const file = new File([blob], filename, { type: blob.type || cleanMime });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
           title: filename,
-          text: `Daymark Workspace Export: ${filename}`
+          text: `Daymark Attachment: ${filename}`
         });
         return true;
       }
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        // User closed native Android save/share dialog
+        // User closed mobile save/share dialog
         return false;
       }
-      console.warn('Mobile Web Share API failed, falling through to File Picker / Blob:', err);
+      console.warn('Mobile Web Share API failed, falling through to Blob URL:', err);
     }
   }
 
-  // 2. Desktop File System Access API (showSaveFilePicker for Chrome / Edge desktop)
+  // 2. Desktop File System Access API (showSaveFilePicker dialog)
   if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
     try {
-      const ext = filename.includes('.') ? filename.split('.').pop() || 'txt' : 'txt';
+      const ext = filename.includes('.') ? filename.split('.').pop() || 'file' : 'file';
       const handle = await (window as any).showSaveFilePicker({
         suggestedName: filename,
         types: [
           {
-            description: 'Save Data Export File',
+            description: 'Save File',
             accept: {
-              [cleanMime]: [`.${ext}`]
+              [blob.type || cleanMime]: [`.${ext}`]
             }
           }
         ]
       });
       const writable = await handle.createWritable();
-      await writable.write(content);
+      await writable.write(blob);
       await writable.close();
       return true;
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        // User cancelled desktop File Explorer dialog
         return false;
       }
-      console.warn('showSaveFilePicker failed or unsupported, executing Blob fallback:', err);
+      console.warn('showSaveFilePicker fallback:', err);
     }
   }
 
-  // 3. Fallback: Blob URL & Data URI download
-  downloadFile(filename, content, cleanMime);
-  return true;
+  // 3. Fallback: Standard Blob URL anchor download
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+    return true;
+  } catch (e) {
+    console.error('All download methods failed:', e);
+    return false;
+  }
 }
 
 /**

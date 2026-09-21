@@ -6662,6 +6662,373 @@ h3 {
   }
 }
 
+/* =========================================================================
+   Files Page Studio & Responsive List View Enhancements
+   ========================================================================= */
+
+.files-list-table {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-top: 12px !important;
+}
+
+.files-list-table .list-header {
+  display: grid !important;
+  grid-template-columns: 2.5fr 1.5fr 1fr 1fr 2fr !important;
+  gap: 12px !important;
+  padding: 10px 16px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  color: var(--quiet) !important;
+  border-bottom: 2px solid var(--line) !important;
+  text-transform: uppercase !important;
+}
+
+.files-list-table .list-row {
+  display: grid !important;
+  grid-template-columns: 2.5fr 1.5fr 1fr 1fr 2fr !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
+}
+
+.files-list-table .list-row:hover {
+  background: var(--canvas) !important;
+  border-color: var(--ink) !important;
+}
+
+.list-name-col {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  cursor: pointer !important;
+  min-width: 0 !important;
+}
+
+.list-file-info {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.list-file-name {
+  font-family: 'Georgia', serif !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.list-file-sub {
+  font-size: 11.5px !important;
+  color: var(--quiet) !important;
+}
+
+.list-actions-col {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  justify-content: flex-end !important;
+}
+
+/* Mobile Responsive List View */
+@media (max-width: 768px) {
+  .files-list-table .list-header {
+    display: none !important;
+  }
+
+  .files-list-table .list-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px !important;
+  }
+
+  .list-actions-col {
+    justify-content: stretch !important;
+    gap: 8px !important;
+  }
+
+  .list-actions-col button {
+    flex: 1 !important;
+    height: 38px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Custom Category Select in Cards & Lists */
+.card-category-custom-select,
+.list-category-custom-select {
+  font-size: 12px !important;
+  min-width: 110px !important;
+}
+
+/* Studio Header & Navigation */
+.document-studio-container {
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3) !important;
+  overflow: hidden !important;
+  max-width: 1200px !important;
+  width: 95vw !important;
+  max-height: 92vh !important;
+  height: 92vh !important;
+}
+
+.studio-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  padding: 18px 24px !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: var(--canvas) !important;
+}
+
+.studio-title-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.studio-filename {
+  margin: 0 !important;
+  font-family: 'Georgia', serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.studio-meta-pills {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-top: 4px !important;
+}
+
+.meta-pill {
+  font-size: 11.5px !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--quiet) !important;
+}
+
+.studio-close-btn {
+  font-size: 18px !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.studio-sub-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 24px !important;
+  background: var(--paper) !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+
+.format-badge-label {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Widescreen PowerPoint Presentation Studio */
+.pptx-studio-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  padding: 20px !important;
+  background: #121110 !important;
+  color: #f2eee5 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}
+
+.pptx-nav-controller {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 16px !important;
+  background: #1c1b18 !important;
+  border: 1px solid #36332d !important;
+  border-radius: 10px !important;
+}
+
+.pptx-counter-badge {
+  font-size: 14px !important;
+  color: #d0c8bb !important;
+}
+
+.pptx-widescreen-frame {
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 320px !important;
+}
+
+.pptx-slide-canvas {
+  width: 100% !important;
+  max-width: 860px !important;
+  aspect-ratio: 16 / 9 !important;
+  background: #1f1d19 !important;
+  border: 1px solid #3c3831 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5) !important;
+  padding: 32px 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+}
+
+.pptx-canvas-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-bottom: 1px solid #36332d !important;
+  padding-bottom: 12px !important;
+}
+
+.pptx-slide-badge {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #dc8064 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.pptx-deck-title {
+  font-size: 12px !important;
+  color: #a09789 !important;
+}
+
+.pptx-canvas-body {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  padding: 16px 0 !important;
+}
+
+.pptx-slide-title {
+  font-family: 'Georgia', serif !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #f5f0e6 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.pptx-bullet-list {
+  margin: 0 !important;
+  padding-left: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.pptx-bullet-list li {
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  color: #d8d0c2 !important;
+}
+
+.pptx-canvas-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 11px !important;
+  color: #787063 !important;
+  border-top: 1px solid #36332d !important;
+  padding-top: 10px !important;
+}
+
+.pptx-thumbnails-bar {
+  display: flex !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+  padding: 8px 4px !important;
+}
+
+.pptx-thumb-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  padding: 10px 14px !important;
+  min-width: 140px !important;
+  background: #1a1916 !important;
+  border: 1px solid #33302a !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.2s ease !important;
+}
+
+.pptx-thumb-card.active {
+  border-color: #dc8064 !important;
+  background: #282520 !important;
+}
+
+.pptx-thumb-card .thumb-num {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #dc8064 !important;
+}
+
+.pptx-thumb-card .thumb-title {
+  font-size: 11.5px !important;
+  color: #d0c8bb !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* PDF Viewport */
+.pdf-viewport-full {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 480px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.pdf-document-frame {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 520px !important;
+  border: none !important;
+}
+
+.pdf-fallback-box {
+  padding: 40px !important;
+  text-align: center !important;
+}
+
 
 
 
