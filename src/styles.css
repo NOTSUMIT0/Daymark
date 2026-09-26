@@ -7173,14 +7173,7 @@ h3 {
 }
 @media (min-width: 769px) {
   /* 4. Fix Native Select Styling (Dropdowns in Modals & Pages) */
-  select,
-  .quick-priority-select,
-  .category-select-wrapper select,
-  .folder-select,
-  .sort-select,
-  .card-category-select,
-  .composer select,
-  .form-select {
+  select {
     appearance: none !important;
     background-color: var(--paper) !important;
     color: var(--ink) !important;
