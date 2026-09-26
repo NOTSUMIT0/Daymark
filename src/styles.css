@@ -7239,4 +7239,20 @@ h3 {
     border: none !important;
     transform: none !important;
   }
+
+  /* 6. Fix Quick Capture Form Layout */
+  .quick-capture-form {
+    display: flex !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  .quick-capture-input {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .quick-priority-select.custom-select-container {
+    min-width: 120px !important;
+    width: 130px !important;
+    flex: 0 0 130px !important;
+  }
 }
