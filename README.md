@@ -11,21 +11,21 @@
 
 ---
 
-## ✨ Features
+## Features
 
-- 📅 **Daily Tasks Management**: Organize your daily routine with an intuitive task tracker.
-- 🗺️ **Roadmaps**: Plan long-term goals and visualize your progress over time.
-- 📝 **Notes & Ideas**: Capture your thoughts instantly with a built-in rich note-taking interface.
-- 📁 **File Management**: Store and manage relevant files directly within the app context.
-- 📊 **Insights & Reports**: Generate reports to track your productivity and habits.
-- 📱 **Cross-Platform**: Seamless unified experience on Desktop (Windows/macOS/Linux) and Mobile (Android).
-- ⌨️ **Command Palette**: Quickly navigate and perform actions using global shortcuts (e.g., `Ctrl+K`).
-- ⏱️ **Focus Sprints**: Built-in Pomodoro-style timer for focus sessions.
-- 🎨 **Beautiful UI**: Supports fully customizable Dark & Light themes.
+- **Daily Tasks Management**: Organize your daily routine with an intuitive task tracker.
+- **Roadmaps**: Plan long-term goals and visualize your progress over time.
+- **Notes & Ideas**: Capture your thoughts instantly with a built-in rich note-taking interface.
+- **File Management**: Store and manage relevant files directly within the app context.
+- **Insights & Reports**: Generate reports to track your productivity and habits.
+- **Cross-Platform**: Seamless unified experience on Desktop (Windows/macOS/Linux) and Mobile (Android).
+- **Command Palette**: Quickly navigate and perform actions using global shortcuts (e.g., `Ctrl+K`).
+- **Focus Sprints**: Built-in Pomodoro-style timer for focus sessions.
+- **Beautiful UI**: Supports fully customizable Dark & Light themes.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend**: React 18, TypeScript, Vite, TailwindCSS
 - **Desktop Packaging**: Tauri (`@tauri-apps/cli`) built with Rust
@@ -34,7 +34,7 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 Before you begin, ensure you have the following installed:
@@ -62,13 +62,11 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 📦 Building & GitHub Releases Guide
+### Desktop (Windows)
 
-When you are ready to distribute Daymark to users, you will create a **GitHub Release**. Below is the guide on how to build and exactly what files to upload.
+Daymark uses [Tauri](https://tauri.app/) to package the web app into a lightweight desktop application. 
 
-### 🖥️ Desktop (Windows / macOS / Linux)
-
-Daymark uses [Tauri](https://tauri.app/) to package the web app into a lightweight desktop application. **Note:** You must build on the target OS (e.g., build on Windows for Windows users).
+**Note:** You must build on the target OS (e.g., build on Windows for Windows users).
 
 **Build Command:**
 ```bash
@@ -76,12 +74,7 @@ npm run build
 npm run tauri:build
 ```
 
-**Files to upload to GitHub Release:**
-- 🪟 **Windows**: Go to `src-tauri/target/release/bundle/nsis/` and upload `Daymark_x.x.x_x64-setup.exe` (and/or the `.msi` file).
-- 🍎 **macOS**: Go to `src-tauri/target/release/bundle/dmg/` and upload `Daymark_x.x.x_x64.dmg`.
-- 🐧 **Linux**: Go to `src-tauri/target/release/bundle/appimage/` and upload `daymark_x.x.x_amd64.AppImage` (and the `.deb` file).
-
-### 📱 Android (Mobile)
+### Android (Mobile)
 
 Daymark uses [Capacitor](https://capacitorjs.com/) for native Android.
 
@@ -97,24 +90,9 @@ Daymark uses [Capacitor](https://capacitorjs.com/) for native Android.
    ```
 3. In Android Studio, go to `Build` -> `Generate Signed Bundle / APK...` -> choose `APK`.
 
-**Files to upload to GitHub Release:**
-- 🤖 **Android**: Navigate to `android/app/release/` and upload `app-release.apk`. *(If you didn't sign it, upload `android/app/build/outputs/apk/debug/app-debug.apk`, though a signed release APK is recommended).*
-
 ---
 
-## 🔒 Security Best Practices (DO NOT COMMIT)
-
-To protect your app's security and your users, **NEVER commit or upload the following files** to GitHub (ensure they are in your `.gitignore`):
-
-- ❌ **`.env` files**: Contains your secret API keys, database URLs, or private tokens.
-- ❌ **Android Keystore files (`*.jks`, `*.keystore`)**: Used to cryptographically sign your Android APK. If leaked, anyone can impersonate your app.
-- ❌ **`key.properties`**: Contains the passwords for your Android keystore.
-- ❌ **Tauri private keys**: If you use Tauri's built-in updater, keep the `.key` private key file strictly local.
-- ❌ **`node_modules/` or build folders**: Keep your repository clean.
-
----
-
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Shortcut | Action |
 | :--- | :--- |
@@ -127,6 +105,6 @@ To protect your app's security and your users, **NEVER commit or upload the foll
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
