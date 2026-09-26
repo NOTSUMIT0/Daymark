@@ -7249,8 +7249,8 @@ h3 {
     min-width: 0 !important;
   }
   .quick-priority-select.custom-select-container {
-    min-width: 120px !important;
-    width: 130px !important;
-    flex: 0 0 130px !important;
+    min-width: 160px !important;
+    width: 160px !important;
+    flex: 0 0 160px !important;
   }
 }
