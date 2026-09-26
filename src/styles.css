@@ -7177,8 +7177,9 @@ h3 {
     color: var(--ink) !important;
     border: 1px solid var(--line) !important;
     border-radius: 6px !important;
-    padding: 8px 32px 8px 12px !important;
+    padding: 0 32px 0 12px !important;
     font-size: 13.5px !important;
+    line-height: normal !important;
     background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>') !important;
     background-repeat: no-repeat !important;
     background-position: right 10px center !important;
