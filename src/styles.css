@@ -6403,6 +6403,7 @@ h3 {
     flex-direction: column !important;
     gap: 10px !important;
   }
+}
 
 /* Universal CustomSelect Component Styling (Desktop & Mobile Unified) */
 .custom-select-container {
