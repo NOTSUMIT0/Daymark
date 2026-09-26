@@ -5759,11 +5759,9 @@ h3 {
 }
 
 .task-card-item.priority-high {
-  border-left: 4px solid var(--status-pending);
 }
 
 .task-card-item.status-complete {
-  border-left: 4px solid var(--status-complete);
   opacity: 0.85;
 }
 
