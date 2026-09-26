@@ -7037,3 +7037,136 @@ h3 {
 
 
 
+
+/* =========================================================
+   DESKTOP UI FIXES
+   ========================================================= */
+@media (min-width: 769px) {
+  
+  /* 1. Header Search Trigger (Image 1) */
+  .header-search-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    width: 240px !important;
+    justify-content: flex-start !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+  }
+  .header-search-trigger .search-text-label {
+    display: inline-block !important;
+    color: var(--quiet) !important;
+    font-size: 13px !important;
+  }
+  .header-search-trigger .esc-key-hint {
+    display: inline-block !important;
+    margin-left: auto !important;
+    background: var(--canvas) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    color: var(--quiet) !important;
+    border: 1px solid var(--line) !important;
+  }
+
+  /* 2. Custom Select Dropdown & Items (Images 2, 4, 5) */
+  .custom-select-container {
+    min-width: 160px !important;
+  }
+  .custom-select-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 12px !important;
+    border: none !important;
+    width: 100% !important;
+    min-height: 36px !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+  }
+  .custom-select-item:hover {
+    background: var(--canvas) !important;
+  }
+  .custom-select-dropdown {
+    width: 100% !important;
+    min-width: max-content !important;
+  }
+
+  /* 3. Roadmaps Canvas Nodes & Buttons (Image 3) */
+  .selector-group select {
+    appearance: none !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    padding-right: 30px !important;
+  }
+  
+  .zoom-controls button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 12px !important;
+  }
+  .action-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .canvas-node {
+    position: absolute !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    border-top-width: 4px !important;
+    border-radius: 6px !important;
+    padding: 14px 16px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    min-height: 150px !important;
+    width: 240px !important;
+    box-sizing: border-box !important;
+    z-index: 50 !important;
+  }
+  .canvas-node .node-body {
+    flex: 1 !important;
+    overflow: hidden !important;
+    margin: 4px 0 8px !important;
+  }
+  .canvas-node .node-title {
+    font-size: 15px !important;
+    font-weight: bold !important;
+    margin-bottom: 4px !important;
+  }
+  .canvas-node .node-card-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1px solid var(--line) !important;
+    padding-top: 8px !important;
+  }
+  .canvas-node .edit-node-btn {
+    border: none !important;
+    background: transparent !important;
+    color: var(--quiet) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+  }
+  .canvas-node .node-status-dots .dot-btn {
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+  }
+
+  .roadmap-dropdown-trigger {
+    min-height: 40px !important;
+  }
+  
+  .notes-toolbar button, .files-toolbar button, .tasks-toolbar button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
